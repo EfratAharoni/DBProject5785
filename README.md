@@ -1,6 +1,3 @@
-# Nursery School 
-
-Efrat Aharoni Example
 
 ## Table of Contents  
 - [Phase 1: Design and Build the Database](#phase-1-design-and-build-the-database)  
@@ -90,5 +87,11 @@ Provide the following SQL scripts:
 ![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1)  
 
 **Results for the command:**  
-```sql
 SELECT COUNT(*) FROM Customers;
+![image](https://github.com/user-attachments/assets/8255ff92-1127-496f-8bdc-a4a3afd1306d)
+
+**Third tool: using python to create csv file**
+
+![image](https://github.com/user-attachments/assets/120066cb-701d-4610-a6f2-7aa5b1bb1cc8)
+
+## Phase 2: Integration 
