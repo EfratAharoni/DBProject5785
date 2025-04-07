@@ -15,16 +15,79 @@ The Nursery School Database is designed to efficiently manage information relate
 Provide the following SQL scripts:
 
 **Create Tables Script - The SQL script for creating the database tables is available in the repository:**
+
 📜[CreateTables](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/scripts/CreateTables.sql)
 
 Insert Data Script - The SQL script for insert data to the database tables is available in the repository:
+
 📜[InsertTable](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/scripts/InsertTable.sql)
 
 Drop Tables Script - The SQL script for droping all tables is available in the repository:
+
 📜[DropTable](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/scripts/DropTable.sql)
 
 Select All Data Script - The SQL script for selectAll tables is available in the repository:
+
 📜[SelectTable](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/scripts/SelectTable.sql)
+
+**Data**
+First tool: using mockaro to create csv file
+Entering a data to Facilities table
+Facilities id scope 1-400 📜[Facilities](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/mockData/Facilities.csv)
+
+Entering a data to Reviews table
+Reviews id scope 1-400 📜[Reviews](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/mockData/Reviews.csv)
+
+Entering a data to Venue table
+Venue id scope 1-400 📜[Venue](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/mockData/Venue.csv)
+
+Entering a data to apotropus table
+person id scope 401-800
+Formula of Venue ID: this + 1
+![image](https://github.com/user-attachments/assets/ddedf9d4-9b81-4453-94da-63d0415bd2f0)
+
+![image](https://github.com/user-attachments/assets/63a0dc41-5574-46e7-b05f-e5602c778b43)
+
+![image](https://github.com/user-attachments/assets/49816646-572b-4e52-b948-04e5679dbb53)
+
+![image](https://github.com/user-attachments/assets/4e30c7b8-a845-477e-93e7-2c5c322539e5)
+
+**Second tool: using generatedata. to create csv file**
+
+Entering a data to babyGroup table
+
+Group Number scope 1-400 📜[Customers](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/generateData/Customers.csv)
+
+![image](https://github.com/user-attachments/assets/d64480ef-8d04-4b35-b57c-64b9b15861de)
+
+![image](https://github.com/user-attachments/assets/e0ad3be9-12b5-424c-9c41-cd0ba2a878f4)
+
+![image](https://github.com/user-attachments/assets/d3120f0a-0e17-4fd6-821a-35387e244f9b)
+
+![image](https://github.com/user-attachments/assets/a51e94e5-d024-41fe-bace-4809eb89d794)
+
+![image](https://github.com/user-attachments/assets/8ff5ee91-fadf-4f0f-8989-30a3b029988a)
+
+![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1)
+
+
+results for the command SELECT COUNT(*) FROM Customers;:
+![image](https://github.com/user-attachments/assets/8255ff92-1127-496f-8bdc-a4a3afd1306d)
+
+**Third tool: using python to create csv file**
+
+![image](https://github.com/user-attachments/assets/120066cb-701d-4610-a6f2-7aa5b1bb1cc8)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
