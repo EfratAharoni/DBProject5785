@@ -1,3 +1,4 @@
+# Avishag Timstit & Efrat Aharoni 
 
 ## Table of Contents  
 - [Phase 1: Design and Build the Database](#phase-1-design-and-build-the-database)  
