@@ -68,7 +68,7 @@ Provide the following SQL scripts:
 
 ![image](https://github.com/EfratAharoni/DBProject5785/blob/main/04e7128d-3486-4f46-8bee-47a92711415e.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/31b52dde-8384-4db4-bd75-9b483d33a277.jpg)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/ca343bc7-3d08-4c86-b503-d5b1f49d8346.jpg)
 
 ![image](https://github.com/EfratAharoni/DBProject5785/blob/main/7ce3888e-9f3d-45c3-9f42-ae5c49d6b148.jpg)
 
