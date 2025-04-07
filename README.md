@@ -66,13 +66,13 @@ Provide the following SQL scripts:
 - Person ID scope: 401-800  
 - Formula of Venue ID: `this + 1`  
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/04e7128d-3486-4f46-8bee-47a92711415e.jpg)
+![image](Images/04e7128d-3486-4f46-8bee-47a92711415e.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/ca343bc7-3d08-4c86-b503-d5b1f49d8346.jpg)
+![image](Images/ca343bc7-3d08-4c86-b503-d5b1f49d8346.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/7ce3888e-9f3d-45c3-9f42-ae5c49d6b148.jpg)
+![image](Images/7ce3888e-9f3d-45c3-9f42-ae5c49d6b148.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/cc08d396-200f-4298-967e-3afac4862e7d.jpg)
+![image](Images/cc08d396-200f-4298-967e-3afac4862e7d.jpg)
 
 ---
 
@@ -83,24 +83,30 @@ Provide the following SQL scripts:
 
 📜[Customers](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/generateData/Customers.csv)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/aeb1af71-f630-496f-a4db-9b3e7cadc999.jpg)
+![image](Images/aeb1af71-f630-496f-a4db-9b3e7cadc999.jpg)
 
-![image](https://github.com/user-attachments/assets/e0ad3be9-12b5-424c-9c41-cd0ba2a878f4)
+![image](Images/31b52dde-8384-4db4-bd75-9b483d33a277.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/c6f3a9f6-e33e-4f4a-ac13-814db44a59db.jpg)
+![image](Images/c6f3a9f6-e33e-4f4a-ac13-814db44a59db.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/31b52dde-8384-4db4-bd75-9b483d33a277.jpg)
-
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/a7454879-58ff-4609-8b6f-77c3f05a37a3.jpg)
+![image](Images/a7454879-58ff-4609-8b6f-77c3f05a37a3.jpg)
 
 
 **Results for the command:**  
 SELECT COUNT(*) FROM Customers;
 
-![image](https://github.com/user-attachments/assets/8255ff92-1127-496f-8bdc-a4a3afd1306d)
+![image](Images/3259126b-8969-44a0-8296-95df0905fe95.jpg)
 
 **Third tool: using python to create csv file**
 
 ![image](https://github.com/user-attachments/assets/120066cb-701d-4610-a6f2-7aa5b1bb1cc8)
+
+### Backup
+**backups files are kept with the date and hour of the backup:**
+
+![image](Images/6c8b73f4-eefd-49b8-9a9d-758adb0b7ba4.jpg)
+
+![image](Images/d1ed3e19-7063-404b-a8e0-e0ff8fc7addd.jpg)
+
 
 ## Phase 2: Integration 
