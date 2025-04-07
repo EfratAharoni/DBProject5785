@@ -66,10 +66,13 @@ Provide the following SQL scripts:
 - Person ID scope: 401-800  
 - Formula of Venue ID: `this + 1`  
 
-![image](https://github.com/user-attachments/assets/ddedf9d4-9b81-4453-94da-63d0415bd2f0)  
-![image](https://github.com/user-attachments/assets/63a0dc41-5574-46e7-b05f-e5602c778b43)  
-![image](https://github.com/user-attachments/assets/49816646-572b-4e52-b948-04e5679dbb53)  
-![image](https://github.com/user-attachments/assets/4e30c7b8-a845-477e-93e7-2c5c322539e5)  
+![image](https://github.com/user-attachments/assets/ddedf9d4-9b81-4453-94da-63d0415bd2f0)
+
+![image](https://github.com/user-attachments/assets/63a0dc41-5574-46e7-b05f-e5602c778b43)
+
+![image](https://github.com/user-attachments/assets/49816646-572b-4e52-b948-04e5679dbb53)
+
+![image](https://github.com/user-attachments/assets/4e30c7b8-a845-477e-93e7-2c5c322539e5)
 
 ---
 
@@ -77,17 +80,24 @@ Provide the following SQL scripts:
 
 ##### Entering data to **Customers** table  
 - Group Number scope: 1-400  
-📜 **[View `Customers.csv`](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/generateData/Customers.csv)**  
 
-![image](https://github.com/user-attachments/assets/d64480ef-8d04-4b35-b57c-64b9b15861de)  
-![image](https://github.com/user-attachments/assets/e0ad3be9-12b5-424c-9c41-cd0ba2a878f4)  
-![image](https://github.com/user-attachments/assets/d3120f0a-0e17-4fd6-821a-35387e244f9b)  
-![image](https://github.com/user-attachments/assets/a51e94e5-d024-41fe-bace-4809eb89d794)  
-![image](https://github.com/user-attachments/assets/8ff5ee91-fadf-4f0f-8989-30a3b029988a)  
-![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1)  
+📜[Customers](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/generateData/Customers.csv)
+
+![image](https://github.com/user-attachments/assets/d64480ef-8d04-4b35-b57c-64b9b15861de)
+
+![image](https://github.com/user-attachments/assets/e0ad3be9-12b5-424c-9c41-cd0ba2a878f4)
+
+![image](https://github.com/user-attachments/assets/d3120f0a-0e17-4fd6-821a-35387e244f9b)
+
+![image](https://github.com/user-attachments/assets/a51e94e5-d024-41fe-bace-4809eb89d794)
+
+![image](https://github.com/user-attachments/assets/8ff5ee91-fadf-4f0f-8989-30a3b029988a)
+
+![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1) 
 
 **Results for the command:**  
 SELECT COUNT(*) FROM Customers;
+
 ![image](https://github.com/user-attachments/assets/8255ff92-1127-496f-8bdc-a4a3afd1306d)
 
 **Third tool: using python to create csv file**
