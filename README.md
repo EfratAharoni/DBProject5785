@@ -93,7 +93,7 @@ Provide the following SQL scripts:
 
 ![image](https://github.com/EfratAharoni/DBProject5785/blob/main/a7454879-58ff-4609-8b6f-77c3f05a37a3.jpg)
 
-![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1) 
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/3259126b-8969-44a0-8296-95df0905fe95.jpg) 
 
 **Results for the command:**  
 SELECT COUNT(*) FROM Customers;
