@@ -89,11 +89,10 @@ Provide the following SQL scripts:
 
 ![image](https://github.com/EfratAharoni/DBProject5785/blob/main/c6f3a9f6-e33e-4f4a-ac13-814db44a59db.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/ca343bc7-3d08-4c86-b503-d5b1f49d8346.jpg)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/31b52dde-8384-4db4-bd75-9b483d33a277.jpg)
 
 ![image](https://github.com/EfratAharoni/DBProject5785/blob/main/a7454879-58ff-4609-8b6f-77c3f05a37a3.jpg)
 
-![image](https://github.com/EfratAharoni/DBProject5785/blob/main/3259126b-8969-44a0-8296-95df0905fe95.jpg) 
 
 **Results for the command:**  
 SELECT COUNT(*) FROM Customers;
