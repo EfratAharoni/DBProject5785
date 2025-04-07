@@ -66,13 +66,13 @@ Provide the following SQL scripts:
 - Person ID scope: 401-800  
 - Formula of Venue ID: `this + 1`  
 
-![image](https://github.com/user-attachments/assets/ddedf9d4-9b81-4453-94da-63d0415bd2f0)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/04e7128d-3486-4f46-8bee-47a92711415e.jpg)
 
-![image](https://github.com/user-attachments/assets/63a0dc41-5574-46e7-b05f-e5602c778b43)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/31b52dde-8384-4db4-bd75-9b483d33a277.jpg)
 
-![image](https://github.com/user-attachments/assets/49816646-572b-4e52-b948-04e5679dbb53)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/7ce3888e-9f3d-45c3-9f42-ae5c49d6b148.jpg)
 
-![image](https://github.com/user-attachments/assets/4e30c7b8-a845-477e-93e7-2c5c322539e5)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/cc08d396-200f-4298-967e-3afac4862e7d.jpg)
 
 ---
 
@@ -83,15 +83,15 @@ Provide the following SQL scripts:
 
 📜[Customers](https://github.com/EfratAharoni/DBProject5785/blob/main/Phase1/generateData/Customers.csv)
 
-![image](https://github.com/user-attachments/assets/d64480ef-8d04-4b35-b57c-64b9b15861de)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/aeb1af71-f630-496f-a4db-9b3e7cadc999.jpg)
 
 ![image](https://github.com/user-attachments/assets/e0ad3be9-12b5-424c-9c41-cd0ba2a878f4)
 
-![image](https://github.com/user-attachments/assets/d3120f0a-0e17-4fd6-821a-35387e244f9b)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/c6f3a9f6-e33e-4f4a-ac13-814db44a59db.jpg)
 
-![image](https://github.com/user-attachments/assets/a51e94e5-d024-41fe-bace-4809eb89d794)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/ca343bc7-3d08-4c86-b503-d5b1f49d8346.jpg)
 
-![image](https://github.com/user-attachments/assets/8ff5ee91-fadf-4f0f-8989-30a3b029988a)
+![image](https://github.com/EfratAharoni/DBProject5785/blob/main/a7454879-58ff-4609-8b6f-77c3f05a37a3.jpg)
 
 ![image](https://github.com/user-attachments/assets/f74ee7df-b1ce-464a-84f0-94cf67f63bb1) 
 
