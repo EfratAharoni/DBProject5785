@@ -7,7 +7,13 @@
   - [DSD (Data Structure Diagram)](#dsd-data-structure-diagram)  
   - [SQL Scripts](#sql-scripts)  
   - [Data](#data)  
-- [Phase 2: Integration](#phase-2-integration)  
+- [Phase 2: Queries & Constraints](#phase-2-integration)  
+  - [Introduction](#introduction)  
+  - [SQL Queries](#SQL-Queries)  
+  - [SELECT Queries](#SELECT-Queries)  
+  - [UPDATE Queries](#UPDATE-Queries)  
+  - [Constraints](#Constraints)
+
 
 ---
 
