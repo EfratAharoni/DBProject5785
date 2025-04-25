@@ -120,12 +120,12 @@ SELECT COUNT(*) FROM Customers;
 ## Phase 2: Queries & Constraints
 
 ### Introduction  
----
+
 In this phase, we focused on querying and manipulating the database in more advanced ways. The goal was to demonstrate complex SQL capabilities such as multi-table queries, conditional logic, transaction management, and data integrity through constraints.
 
+---
 ### SQL Queries
 
----
 #### SELECT Queries
 1. **השאילתא מחזירה את הלקוחות שהשתתפו באירועים עם יותר מ־1000 מקומות פנויים**
 ![image](Images/98c85b58-0733-4f47-af7d-1c95fc4d8f15.jpg)
