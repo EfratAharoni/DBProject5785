@@ -119,3 +119,28 @@ SELECT COUNT(*) FROM Customers;
 ## Phase 2: Queries & Constraints
 In this phase, we focused on querying and manipulating the database in more advanced ways. The goal was to demonstrate complex SQL capabilities such as multi-table queries, conditional logic, transaction management, and data integrity through constraints.
 
+### SQL Queries
+#### SELECT Queries
+1. **השאילתא מחזירה את הלקוחות שהשתתפו באירועים עם יותר מ־1000 מקומות פנויים**
+![image](Images/98c85b58-0733-4f47-af7d-1c95fc4d8f15.jpg)
+
+2. **השאילתא מחזירה בעלים של מקומות עם מחיר השכרה מעל 30,000**
+![image](Images/1f0a840c-a55c-41a5-9ad2-58c9acd778db.jpg)
+
+3. **מאחזר ביקורות על מקומות שבהם התרחשו אירועים במהלך ינואר 2025, כולל פרטי סקירה, תאריך האירוע ופרטי המקום**
+![image](Images/f9fba059-e2eb-47e2-a8be-4f1dcb263bae.jpg)
+
+4. **השאילתא מחזירה את שם המקום, השנה, החודש ומספר האירועים**
+![image](Images/9662387c-4ce3-40ea-9753-dc010bd7e19a.jpg)
+
+5. **השאילתא מחזירה ממוצע דירוג לכל אולם**
+![image](Images/24ac3952-73e6-4624-9823-1fda673f5b58.jpg)
+
+6. **השאילתא מציגה את כל האירועים שהתקיימו בשנת 2025 באולמות שבהם מחיר השכירות גבוה מהממוצע, ממוין לפי מספר המקומות הפנויים (מהכי הרבה לפחות).**
+![image](Images/cae5775e-1b9c-420d-a67c-8f4eeba7e378.jpg)
+
+7. **מחזירה אולמות שלא קיבלו חוות דעת עם דירוג 4 ומעלה.**
+![image](Images/cc1625f1-4036-4343-9855-9341a2c05e57.jpg)
+
+8. **השאילתא מחזירה אולמות שאין להם מתקנים משויכים**
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
