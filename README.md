@@ -162,7 +162,7 @@ In this phase, we focused on querying and manipulating the database in more adva
 ![image](Images/10246137-ece9-4f4b-902c-5d81f19e49c5.jpg)
   
 - צילום בסיס הנתונים אחרי העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/ddf2c992-b37b-4e5e-b411-cfa2bc987de9.jpg)
 
 2. שאילתא המוחקת ביקורות עם דירוג נמוך מאוד (1 מתוך 5)
 - צילום בסיס הנתונים לפני העדכון
@@ -174,7 +174,7 @@ In this phase, we focused on querying and manipulating the database in more adva
 - צילום בסיס הנתונים אחרי העדכון
 ![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
 
-3. שאילתא
+3. שאילתא המוחקת בעלי אולמות (Owners) שהאולם שלהם אין עליו בכלל ביקורות (Reviews) או אין עליו הזמנות
 - צילום בסיס הנתונים לפני העדכון
 ![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
 
@@ -195,7 +195,7 @@ In this phase, we focused on querying and manipulating the database in more adva
 ![image](Images/6a86c66d-545a-4f32-bfed-7e2a05b71c28.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/c97b0bb2-c58d-48f0-9529-b645d7e4d0ae.jpg)
 
   
 1. שאילתא המעדכנת את התשלומים הנוספים (Additional_fees) ל-0 עבור אירועים שהתרחשו לפני מאי 2025
