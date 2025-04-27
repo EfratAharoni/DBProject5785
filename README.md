@@ -166,10 +166,10 @@ In this phase, we focused on querying and manipulating the database in more adva
 
 2. שאילתא המוחקת ביקורות עם דירוג נמוך מאוד (1 מתוך 5)
 - צילום בסיס הנתונים לפני העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/30b30a61-f5de-48fe-807f-3786ede3f728.jpg)
 
 - צילום הרצה
-![image](Images/0254b1e8-b280-454f-a709-65d96ed1b5c0.jpg)
+![image](Images/5cdeb53b-036e-483b-b563-71ba7273b9f2.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
 ![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
@@ -189,10 +189,10 @@ In this phase, we focused on querying and manipulating the database in more adva
 
 1. שאילתא המעדכנת את מחיר השכירות עבור מקומות שקיבלו ביקורת של 5 כוכבים
 - צילום בסיס הנתונים לפני העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/5a5dd74c-9376-4316-94f8-52289f096b23.jpg)
 
 - צילום הרצה
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/6a86c66d-545a-4f32-bfed-7e2a05b71c28.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
 ![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
@@ -210,13 +210,13 @@ In this phase, we focused on querying and manipulating the database in more adva
 
 1. שאילתא המעדכנת את כתובת הדוא"ל של לקוח בהתבסס על ת.ז שלו
 - צילום בסיס הנתונים לפני העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/970eb21d-6428-4e88-8b19-3f24890853b2.jpg)
 
 - צילום הרצה
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/549bf0d6-2ea0-4991-ac35-44698210915e.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+![image](Images/4e1f993f-3b7e-4adb-ab8a-6dc65606bc35.jpg)
 
 
 
