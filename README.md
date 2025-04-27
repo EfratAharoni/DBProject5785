@@ -153,3 +153,70 @@ In this phase, we focused on querying and manipulating the database in more adva
 
 
 #### DELETE Queries
+
+1. השאילתא מוחקת אולמות שאין להם דירוגים
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/2434ee77-9a33-42fb-b433-9eeab37e2915.jpg)
+
+- צילום הרצה
+![image](Images/10246137-ece9-4f4b-902c-5d81f19e49c5.jpg)
+  
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+2. שאילתא המוחקת ביקורות עם דירוג נמוך מאוד (1 מתוך 5)
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום הרצה
+![image](Images/0254b1e8-b280-454f-a709-65d96ed1b5c0.jpg)
+
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+3. שאילתא
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום הרצה
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+  
+#### UPDATE Queries
+
+1. שאילתא המעדכנת את מחיר השכירות עבור מקומות שקיבלו ביקורת של 5 כוכבים
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום הרצה
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+  
+1. שאילתא המעדכנת את התשלומים הנוספים (Additional_fees) ל-0 עבור אירועים שהתרחשו לפני מאי 2025
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום הרצה
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/02daa60b-3adf-40f2-80e3-fe225df1baf0.jpg)
+
+1. שאילתא המעדכנת את כתובת הדוא"ל של לקוח בהתבסס על ת.ז שלו
+- צילום בסיס הנתונים לפני העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום הרצה
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+- צילום בסיס הנתונים אחרי העדכון
+![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+
+
+
