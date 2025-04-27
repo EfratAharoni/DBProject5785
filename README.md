@@ -172,17 +172,17 @@ In this phase, we focused on querying and manipulating the database in more adva
 ![image](Images/5cdeb53b-036e-483b-b563-71ba7273b9f2.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
-![image]()
+![image](Images/0254b1e8-b280-454f-a709-65d96ed1b5c0.jpg)
 
 3. שאילתא המוחקת בעלי אולמות (Owners) שהאולם שלהם אין עליו בכלל ביקורות (Reviews) או אין עליו הזמנות
 - צילום בסיס הנתונים לפני העדכון
-![image]()
+![image](Images/54b3e2a6-cd46-4193-8e84-bd24c1044c59.jpg)
 
 - צילום הרצה
-![image]()
+![image](Images/db64f513-d79b-4c78-9f44-bed512d785c2.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
-![image]()
+![image](Images/50bfb1f2-49a7-447f-bb50-b74a9588e8f0.jpg)
 
   
 #### UPDATE Queries
