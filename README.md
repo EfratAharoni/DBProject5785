@@ -14,6 +14,7 @@
   - [DELETE Queries](#DELETE-Queries)  
   - [UPDATE Queries](#UPDATE-Queries)  
   - [Constraints](#Constraints)
+  - [Rollback and Commit](#RollbackAndCommit)
 
 
 ---
@@ -200,10 +201,10 @@ In this phase, we focused on querying and manipulating the database in more adva
   
 1. שאילתא המעדכנת את התשלומים הנוספים (Additional_fees) ל-0 עבור אירועים שהתרחשו לפני מאי 2025
 - צילום בסיס הנתונים לפני העדכון
-![image]()
+![image](Images/bfe531f5-def4-48ce-b371-132d32d5a5ec.jpg)
 
 - צילום הרצה
-![image]()
+![image](Images/061c5057-9182-4557-9104-277352a5e951.jpg)
 
 - צילום בסיס הנתונים אחרי העדכון
 ![image](Images/02daa60b-3adf-40f2-80e3-fe225df1baf0.jpg)
@@ -218,5 +219,38 @@ In this phase, we focused on querying and manipulating the database in more adva
 - צילום בסיס הנתונים אחרי העדכון
 ![image](Images/4e1f993f-3b7e-4adb-ab8a-6dc65606bc35.jpg)
 
+#### Constraints
+
+1. אילוץ CHECK המוודא שהדירוג הוא בין 1 ל-5
+- צילום הרצה
+![image](Images/50645b3d-1183-4804-812d-17d1cdd47862.jpg)
+
+- נתונים אשר סותרים את האילוץ והודעת שגיאה
+![image](Images/02302aa4-c0a4-44cd-89b3-c54412b16ec5.jpg)
+
+2. אילוץ NOT NULL המוודא שסוג האירוע (EventType) תמיד יסופק
+- צילום הרצה
+![image](Images/d69122a8-8f9b-4d7a-bd65-18d1a853fb1f.jpg)
+
+- נתונים אשר סותרים את האילוץ והודעת שגיאה
+![image](Images/d0569605-0faf-445e-a08f-999bb3f94c64.jpg)
+
+3. אילוץ CHECK כדי לוודא שתאריך האירוע אינו בעבר
+- צילום הרצה
+![image](Images/42dbdffe-b89a-4a08-9261-1f09d1ef44af.jpg)
+
+- נתונים אשר סותרים את האילוץ והודעת שגיאה
+![image](Images/c516a7f0-ffcd-4e59-8c15-fb474ecc445c.jpg)
+
+4. אם לא תציין את מספר המקומות הפנויים בעת הזנת אירוע חדש, הוא יוגדר אוטומטית ל-0.
+
+- צילום הרצה
+![image](Images/ee75a078-1870-4ff5-85c2-cf382ca2a6d3.jpg)
+
+- נתונים אשר סותרים את האילוץ (לא הכנסנו ערך ל-Available_seats!) ותוצאה המראה שהשדה Available_seats הוא 0
+![image](Images/badcfe6b-8241-4a26-b969-3037a8180dc9.jpg)
+![image](Images/a42bd6a5-1dc8-4eb1-a9e0-24f43e0f6857.jpg)
+
+#### Rollback and Commit
 
 
