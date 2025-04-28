@@ -30,7 +30,7 @@ GROUP BY v.VenName, EXTRACT(YEAR FROM e.EventDate), EXTRACT(MONTH FROM e.EventDa
 ORDER BY EventYear DESC, EventMonth DESC, NumberOfEvents DESC;
 
 --5. Average rating per venue
-SELECT v.VenName, AVG(r.Rating) AS AvgRating
+SELECT v.VenId, v.VenName, AVG(r.Rating) AS AvgRating
 FROM Venue v
 LEFT JOIN Reviews r ON r.VenId = v.VenId
 GROUP BY v.VenName;
@@ -47,7 +47,7 @@ AND e.EventDate BETWEEN '2025-01-01' AND '2025-12-31'  -- כל האירועים 
 ORDER BY e.Available_seats DESC;
 
 --7. Returns venues that didn't receive reviews with rating 4 or higher.
-SELECT v.VenId, v.VenName
+SELECT v.VenId, v.VenName, v.Rental_price
 FROM Venue v
 WHERE v.VenId NOT IN (
     SELECT DISTINCT r.VenId
@@ -56,7 +56,7 @@ WHERE v.VenId NOT IN (
 );
 
 --8. Venues that have no associated facilities
-SELECT v.VenId, v.VenName
+SELECT v.VenId, v.VenName, v.Rental_price
 FROM Venue v
 LEFT JOIN Facilities f ON v.VenId = f.FacilityId
 WHERE f.FacilityId IS NULL;
