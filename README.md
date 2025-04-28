@@ -14,7 +14,7 @@
   - [DELETE Queries](#DELETE-Queries)  
   - [UPDATE Queries](#UPDATE-Queries)  
   - [Constraints](#Constraints)
-  - [Rollback and Commit](#Roll_back_And_Commit)
+  - [Rollback and Commit](#Rollback_And_Commit)
 
 
 ---
