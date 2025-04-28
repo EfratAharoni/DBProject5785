@@ -242,7 +242,7 @@ In this phase, we focused on querying and manipulating the database in more adva
 - נתונים אשר סותרים את האילוץ והודעת שגיאה
 ![image](Images/c516a7f0-ffcd-4e59-8c15-fb474ecc445c.jpg)
 
-4. אם לא תציין את מספר המקומות הפנויים בעת הזנת אירוע חדש, הוא יוגדר אוטומטית ל-0.
+4. אילוץ DEFAULT אם לא תציין את מספר המקומות הפנויים בעת הזנת אירוע חדש, הוא יוגדר אוטומטית ל-0.
 
 - צילום הרצה
 ![image](Images/ee75a078-1870-4ff5-85c2-cf382ca2a6d3.jpg)
@@ -254,3 +254,28 @@ In this phase, we focused on querying and manipulating the database in more adva
 #### Rollback and Commit
 
 
+COMMIT
+- צילום בסיס הנתונים לפני הcommit 
+![image](Images/425219a8-87f6-4955-9134-c70a70109e7a.jpg)
+
+- צילום הרצה
+![image](Images/10649222-76e1-4ad4-a289-bfab653e5ade.jpg)
+  
+- צילום בסיס הנתונים אחרי הcommit 
+![image](Images/d11ea2db-9814-4dbf-8094-5b80832e88d6.jpg)
+
+- שמירת השינויים
+![image](Images/8133d8a6-86a1-491c-bb24-23af90bda68d.jpg)
+
+ROLLBACK
+- צילום בסיס הנתונים לפני הrollback 
+![image](Images/ea21c3d9-b192-4320-93b8-8fc37d9e8169.jpg)
+
+- צילום הרצה
+![image](Images/475a68fe-69ab-4acc-96de-6498b3759c50.jpg)
+  
+- צילום בסיס הנתונים אחרי הrollback 
+![image](Images/76eb1518-8ad3-46ce-8cea-bb4d1ec8b344.jpg)
+
+- ביטול השינוים
+![image](Images/dd202062-3ada-4ce9-8c00-2d4e192d79ff.jpg)
