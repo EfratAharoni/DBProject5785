@@ -140,8 +140,8 @@ In this phase, we focused on querying and manipulating the database in more adva
 4. **השאילתא מחזירה את שם המקום, השנה, החודש ומספר האירועים**
 ![image](Images/9662387c-4ce3-40ea-9753-dc010bd7e19a.jpg)
 
-5. **השאילתא מחזירה ממוצע דירוג לכל אולם**
-![image](Images/24ac3952-73e6-4624-9823-1fda673f5b58.jpg)
+5. **ממוצע וכמות דירוגים לכל קיבולת אולם.**
+![Screenshot 2025-04-28 170700](https://github.com/user-attachments/assets/b430a9ed-577a-4dd1-9e0a-79901ce2cf63)
 
 6. **השאילתא מציגה את כל האירועים שהתקיימו בשנת 2025 באולמות שבהם מחיר השכירות גבוה מהממוצע, ממוין לפי מספר המקומות הפנויים (מהכי הרבה לפחות).**
 ![image](Images/cae5775e-1b9c-420d-a67c-8f4eeba7e378.jpg)
@@ -149,8 +149,8 @@ In this phase, we focused on querying and manipulating the database in more adva
 7. **מחזירה אולמות שלא קיבלו חוות דעת עם דירוג 4 ומעלה.**
 ![image](Images/cc1625f1-4036-4343-9855-9341a2c05e57.jpg)
 
-8. **השאילתא מחזירה אולמות שאין להם מתקנים משויכים**
-![image](Images/6d731f3b-cdeb-48c8-a0d2-fe39148173a2.jpg)
+8. **מקומות עם הדירוג הממוצע שלהם, זמינות המתקנים ומידע בסיסי על המקום**
+![Screenshot 2025-04-28 170842](https://github.com/user-attachments/assets/f30c61c2-724b-4910-971b-c678c2be8ba1)
 
 
 #### DELETE Queries
