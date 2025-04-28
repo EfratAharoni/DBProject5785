@@ -30,10 +30,10 @@ GROUP BY v.VenName, EXTRACT(YEAR FROM e.EventDate), EXTRACT(MONTH FROM e.EventDa
 ORDER BY EventYear DESC, EventMonth DESC, NumberOfEvents DESC;
 
 --5. Average rating per venue
-SELECT v.VenId, v.VenName, AVG(r.Rating) AS AvgRating
+SELECT v.Capacity, AVG(r.Rating) AS AvgRating, COUNT(r.Rating)
 FROM Venue v
 LEFT JOIN Reviews r ON r.VenId = v.VenId
-GROUP BY v.VenName;
+GROUP BY v.Capacity;
 
 --6. The query displays all events held in 2025 in venues where the rental price is higher than the average, sorted by the number of available seats from highest to lowest
 SELECT e.EventId, e.EventType, e.EventDate, v.VenName, v.Rental_price, e.Available_seats
@@ -55,8 +55,15 @@ WHERE v.VenId NOT IN (
     WHERE r.Rating >= 4
 );
 
---8. Venues that have no associated facilities
-SELECT v.VenId, v.VenName, v.Rental_price
+--8. Venues with their average rating, facility availability, and venue basic info
+SELECT v.VenId,
+       v.VenName,
+       v.Location,
+       (SELECT COUNT(*) 
+        FROM Facilities f 
+        WHERE f.FacilityId = v.VenId) AS TotalFacilities,
+       (SELECT ROUND(AVG(r.Rating), 2)
+        FROM Reviews r
+        WHERE r.VenId = v.VenId) AS AverageRating
 FROM Venue v
-LEFT JOIN Facilities f ON v.VenId = f.FacilityId
-WHERE f.FacilityId IS NULL;
+ORDER BY AverageRating DESC NULLS LAST, TotalFacilities DESC;
