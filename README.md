@@ -33,7 +33,7 @@ The **Nursery School Database** is designed to efficiently manage information re
 ---
 
 ### DSD (Data Structure Diagram)  
-![image](https://github.com/user-attachments/assets/3b4c74f4-7e7f-49cc-af52-aec7432875f6)
+![image](https://github.com/user-attachments/assets/3f486254-0a1d-45bc-b646-ed26e5d2ebed)
 
 
 
