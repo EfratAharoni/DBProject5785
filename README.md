@@ -281,3 +281,19 @@ ROLLBACK
 
 - ביטול השינוים
 ![image](Images/dd202062-3ada-4ce9-8c00-2d4e192d79ff.jpg)
+
+---
+## Phase 3: Integration & Views
+
+### Introduction 
+
+In this phase, we integrated our database with another team’s system. We performed reverse engineering to recreate the other team's ERD, then designed a unified ERD combining both systems. Using ALTER commands, we adapted our existing schema without recreating tables. Finally, we created two meaningful views—one for each original system—and wrote queries to demonstrate their use.
+
+### ERD (Entity-Relationship Diagram)  
+![ea200c23-5533-4a4a-971d-e7be67b7f419](https://github.com/user-attachments/assets/3aa75b1d-5442-4bf7-9992-f52bf5b1e77f)
+
+---
+
+### DSD (Data Structure Diagram)  
+![fa762980-1df3-4120-a936-03230f17e7d4](https://github.com/user-attachments/assets/82141090-d6cd-4a54-a4c4-4dee62d3bb7d)
+
