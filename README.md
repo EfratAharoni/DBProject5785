@@ -314,3 +314,7 @@ In this phase, we integrated our database with another team’s system. We perfo
 * הTicket היא יישות חדשה שהוספנו עם השדות: TicketId(מפתח) , Price , saleDate ומחוברת לEvent בקשר של יחיד לרבים וגם לCustomers בקשר של יחיד לרבים. זו יישות שלא הייתה קיימת אצלינו ולשם תמיכה בהופעות הוספנו אותה.
 
 ### DSD after integration (Data Structure Diagram)  
+
+---
+
+
