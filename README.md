@@ -300,5 +300,5 @@ In this phase, we integrated our database with another team’s system. We perfo
 ---
 
 ### Combined ERD (Entity-Relationship Diagram)  
-![1b42da7f-8be0-47a7-b978-76c36b5e29b6](https://github.com/user-attachments/assets/747850bf-63be-4629-956f-b21a473ab8c0)
+![ab52db82-4294-4f2d-8239-5d1f31c924d1](https://github.com/user-attachments/assets/ade03ad5-3e77-4a4c-9782-7010738cc433)
 
