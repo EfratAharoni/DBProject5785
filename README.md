@@ -302,7 +302,7 @@ In this phase, we integrated our database with another team’s system. We perfo
 ### Combined ERD (Entity-Relationship Diagram) 
 ![4dd37b64-c016-442d-a92d-9e6206366e62](https://github.com/user-attachments/assets/027ebe9b-c5aa-463f-b47b-f91020dae50f)
 
-- שלב האינטגרציה ברמת העיצוב:
+#### שלב האינטגרציה ברמת העיצוב:
 הסבר כללי- אנחנו יצרנו בסיס נתונים שמנהל אולמות ארועים. האגף החדש ניהל בסיס נתונים שמנהל אולמות שמקיימים בהם הופעות. שינינו את היישויות כך שיתאימו ל2 האפשרויות.
 * היישות Owner נשארה ללא שינוי כיוון שזו יישות שהייתה קיימת רק אצלינו.
 * היישות Facilities נשארה ללא שינוי כיוון שזו יישות שהייתה קיימת רק אצלינו.
@@ -311,7 +311,9 @@ In this phase, we integrated our database with another team’s system. We perfo
 * ביישות Venue הוספנו שדה חדש של parking כי זו תכונה שלא הייתה קיימת אצלינו ונכון היה כן להוסיף אותה.
 * בCustomers חיברנו אותו לTicket (יישות חדשה שהוספנו) בקשר של יחיד לרבים. אצלינו היישות Customers היא הUser באגף השני.
 * הPerformer היא יישות חדשה שהוספנו עם השדות:  PerformerId , PerformerName, PerfContactInfo(מפתח) והיא מחוברת לEvent בקשר של רבים לרבים. זו יישות שלא הייתה קיימת אצלינו ולשם תמיכה בהופעות הוספנו אותה.
+*הקשר event_performer- טבלת קשר בין אירועים לאומנים (רבים לרבים).
 * ה Sponsor היא יישות חדשה שהוספנו עם השדות: SponsorId(מפתח) ,SponsorName, Payment ומחוברת ללEvent בקשר של רבים לרבים. זו יישות שלא הייתה קיימת אצלינו ולשם תמיכה בהופעות הוספנו אותה.
+* הקשר event_sponsor- טבלת קשר רבים לרבים בין נותני חסות לאירועים.
 * הTicket היא יישות חדשה שהוספנו עם השדות: TicketId(מפתח) , Price , saleDate ומחוברת לEvent בקשר של יחיד לרבים וגם לCustomers בקשר של יחיד לרבים. זו יישות שלא הייתה קיימת אצלינו ולשם תמיכה בהופעות הוספנו אותה.
 
 ---
@@ -320,5 +322,9 @@ In this phase, we integrated our database with another team’s system. We perfo
 ![5ffe05c9-e359-4b54-aaf1-fa2c4b7fa67d](https://github.com/user-attachments/assets/20ac0ee9-dc6a-4fc0-9bd7-1cf3a89c7c0d)
 
 ---
-
+#### שימוש בפקודות SQL:
+* פקודת ALTER TABLE: לשינוי טבלאות קיימות (הוספת עמודה).
+* פקודת CREATE TABLE: להגדרת טבלאות חדשות.
+* פקודת FOREIGN KEY: ליצירת קשרים בין הטבלאות.
+* פקודת ON DELETE CASCADE: לדאוג למחיקה אוטומטית של רשומות בתלויות.
 
