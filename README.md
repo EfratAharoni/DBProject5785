@@ -328,3 +328,42 @@ In this phase, we integrated our database with another team’s system. We perfo
 * פקודת FOREIGN KEY: ליצירת קשרים בין הטבלאות.
 * פקודת ON DELETE CASCADE: לדאוג למחיקה אוטומטית של רשומות בתלויות.
 
+---
+#### צילום מסך ותאור הפקודות שנעשו:
+* הוספת השדה החדש parking
+![3b52ee36-a349-400e-a161-c834e543cff9](https://github.com/user-attachments/assets/9e328d47-e62b-4ee3-b908-9a7376960b7e)
+![36b032de-3369-4366-b2c7-f371e83ee98b](https://github.com/user-attachments/assets/16f9bb2e-b6f0-4005-a11d-d9fee5d2e6a4)
+
+* הוספת טבלת Performer יישות חדשה עם השדות: PerformerId , PerformerName, PerfContactInfo(מפתח)
+![b43046cb-ca83-42b2-a83e-194f7102f540](https://github.com/user-attachments/assets/c9f2eaaa-69ca-4567-8bb0-985127f33a36)
+![1f7a5203-7d39-4b7e-9c1b-4cae78019065](https://github.com/user-attachments/assets/18cad83e-5421-41ec-ae17-1c3e44f6100b)
+
+* הוספת טבלת Sponsor יישות חדשה עם השדות: SponsorId(מפתח) ,SponsorName, Payment 
+![654aba41-f3eb-483f-814f-14b2adff10c9](https://github.com/user-attachments/assets/507ccd8a-fc1f-4575-89a0-b57484e22797)
+![a0c0c308-155c-4d2c-895c-2a971cb714ed](https://github.com/user-attachments/assets/916711b9-5a0b-4ca1-b2b6-d759f5793199)
+
+* הוספת טבלת Ticket יישות חדשה עם השדות: TicketId(מפתח) , Price , saleDate
+![aba876d7-1719-4d46-a804-5c455fdb6870](https://github.com/user-attachments/assets/7a6187a3-ced9-4f89-9e89-57b247df3d8f)
+![6180c24f-4861-4030-b35e-4ba49ed436d2](https://github.com/user-attachments/assets/125d0da7-fe46-48ea-be70-7f3532723b5e)
+
+* הקשר event_performer- טבלת קשר בין אירועים לאומנים (רבים לרבים).
+![c7f0c127-2aa2-48ab-a9cf-aea3af669b76](https://github.com/user-attachments/assets/3f1e083d-dfda-4572-a250-55460534b583)
+![0849d435-028e-446a-9935-1652e404c0df](https://github.com/user-attachments/assets/9a18b7b5-7efd-4cb8-ae07-43a5175dc8b3)
+
+* הקשר event_sponsor- טבלת קשר רבים לרבים בין נותני חסות לאירועים.
+![75fcae21-1514-4ee2-817e-807c4e9fbccb](https://github.com/user-attachments/assets/1afb205e-b5bf-4599-99bc-ea53bc356e1b)
+![b06ab9d6-d60c-4691-a2f2-470f1dbab488](https://github.com/user-attachments/assets/e8d6c554-f79c-4001-ba11-cab30ea8d963)
+
+---
+### Views:
+* מבט המציג מידע על כל כרטיס שנרכש – כולל מחיר, תאריך רכישה, שם הלקוח, וסוג האירוע.
+![5356b4fc-b1a5-40b5-b315-23cacfd129c4](https://github.com/user-attachments/assets/79d281b4-6343-4d8a-8fd7-03e7f02779ce)
+![95f65ce8-5734-472c-b2e0-5dec8eed652a](https://github.com/user-attachments/assets/9255f319-e5d7-45a7-83c8-396bc8d4bc58)
+
+* מבט המציג רשימה של כל האירועים עם שמות האומנים המשתתפים בהם.
+![e15ac049-b9fb-4022-b7d8-9484d8ec0a42](https://github.com/user-attachments/assets/37cdc204-b997-49d0-9c49-8c86cacfc49a)
+![5a04687b-7258-4264-a20d-602e57d7cde2](https://github.com/user-attachments/assets/27d0c0a1-cd69-4968-a0c2-66dbe9867e55)
+
+
+
+
