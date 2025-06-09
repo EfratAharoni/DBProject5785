@@ -29,14 +29,17 @@
   - [Views](#views)  
 
 - [Phase 4: Programming](#phase-4-programming)  
-  - [Introduction](#introduction-3)  
+  - [Introduction](#introduction-3)
+  - [FUNCTION 1](#function-1)  
+  - [FUNCTION 2](#function-2)  
+  - [Additional FUNCTION](#additional-function)  
   - [PROCEDURE 1](#procedure-1)  
   - [PROCEDURE 2](#procedure-2)  
   - [Additional PROCEDURE](#additional-procedure)  
   - [TRIGGER 1](#trigger-1)  
   - [TRIGGER 2](#trigger-2)  
-  - [Main Program 1: Calling a Procedure and a Function Using a Cursor](#main-program-1-calling-a-procedure-and-a-function-using-a-cursor)  
-  - [Main Program 2: Updating Seat Quantity and Sponsorship Rewards](#main-program-2-updating-seat-quantity-and-sponsorship-rewards)  
+  - [Main Program 1](#main-program-1)  
+  - [Main Program 2](#main-program-2)  
 
 
 
@@ -330,7 +333,8 @@ In this phase, we integrated our database with another team’s system. We perfo
 ![5ffe05c9-e359-4b54-aaf1-fa2c4b7fa67d](https://github.com/user-attachments/assets/20ac0ee9-dc6a-4fc0-9bd7-1cf3a89c7c0d)
 ---
 
-#### שלב האינטגרציה ברמת העיצוב:
+#### The integration phase at the design level
+שלב האינטגרציה ברמת העיצוב:
 הסבר כללי- אנחנו יצרנו בסיס נתונים שמנהל אולמות ארועים. האגף החדש ניהל בסיס נתונים שמנהל אולמות שמקיימים בהם הופעות. שינינו את היישויות כך שיתאימו ל2 האפשרויות.
 * היישות Owner נשארה ללא שינוי כיוון שזו יישות שהייתה קיימת רק אצלינו.
 * היישות Facilities נשארה ללא שינוי כיוון שזו יישות שהייתה קיימת רק אצלינו.
@@ -345,14 +349,16 @@ In this phase, we integrated our database with another team’s system. We perfo
 * הTicket היא יישות חדשה שהוספנו עם השדות: TicketId(מפתח) , Price , saleDate ומחוברת לEvent בקשר של יחיד לרבים וגם לCustomers בקשר של יחיד לרבים. זו יישות שלא הייתה קיימת אצלינו ולשם תמיכה בהופעות הוספנו אותה.
 
 ---
-#### שימוש בפקודות SQL:
+#### Use of SQL commands
+שימוש בפקודות SQL:
 * פקודת ALTER TABLE: לשינוי טבלאות קיימות (הוספת עמודה).
 * פקודת CREATE TABLE: להגדרת טבלאות חדשות.
 * פקודת FOREIGN KEY: ליצירת קשרים בין הטבלאות.
 * פקודת ON DELETE CASCADE: לדאוג למחיקה אוטומטית של רשומות בתלויות.
 
 ---
-#### צילום מסך ותאור הפקודות שנעשו:
+#### Screenshot and description of the executed commands 
+צילום מסך ותאור הפקודות שנעשו:
 * הוספת השדה החדש parking
 ![3b52ee36-a349-400e-a161-c834e543cff9](https://github.com/user-attachments/assets/9e328d47-e62b-4ee3-b908-9a7376960b7e)
 ![36b032de-3369-4366-b2c7-f371e83ee98b](https://github.com/user-attachments/assets/16f9bb2e-b6f0-4005-a11d-d9fee5d2e6a4)
@@ -394,7 +400,8 @@ In this phase, we integrated our database with another team’s system. We perfo
 
 In this phase, we implemented non-trivial PL/pgSQL programs based on our existing database schema. The goal was to enhance the functionality of the system through advanced database logic. Specifically, we developed two functions and two procedures that perform meaningful operations involving multiple tables. In addition, we implemented two triggers to automate behaviors in response to specific data changes. Finally, we wrote two main programs that demonstrate the practical use of the functions and procedures. These programs are designed to showcase our ability to write modular, efficient, and maintainable PL/pgSQL code.
 
-### פונקציה 1: get_customer_events_summary
+### FUNCTION 1
+פונקציה 1: get_customer_events_summary
 
 #### תיאור מילולי של התוכנית:
 פונקציה זו מקבלת מזהה לקוח ומחזירה טבלת סיכום על האירועים שבהם השתתף, כולל מספר הכרטיסים שקנה לכל אירוע והדירוג הממוצע שנתן. הפונקציה משתמשת ב־refcursor להחזרת תוצאות, כוללת לולאה, הסתעפויות, שימוש ב־cursor מפורש, טבלה זמנית ו־exception handling.
@@ -454,7 +461,8 @@ $$ LANGUAGE plpgsql;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### פונקציה 2: check_event_status_and_update
+### FUNCTION 2
+פונקציה 2: check_event_status_and_update
 
 #### תיאור מילולי של התוכנית:
 הפונקציה מקבלת מזהה אירוע, בודקת האם נותרו מקומות פנויים ואם כן מקטינה את מספרם באחד ומחזירה TRUE. אם לא – מחזירה FALSE. כוללת הסתעפות, DML, טיפול בשגיאות.
@@ -500,7 +508,8 @@ $$ LANGUAGE plpgsql;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### פונקציה נוספת: get_venue_utilization_rate(p_venid INT)
+### Additional FUNCTION
+פונקציה נוספת: get_venue_utilization_rate(p_venid INT)
 #### תיאור מילולי של התוכנית:
 הפונקציה מחזירה את אחוז הניצול של האולם (Venue) — כלומר, כמה מקומות בפועל נתפסו מכל המקומות האפשריים בכל האירועים שהתקיימו בו. זה מדד חשוב לבעל האולם לדעת עד כמה הוא מנוצל לאורך זמן.
 #### הקוד שלה:
@@ -540,7 +549,8 @@ $$ LANGUAGE plpgsql;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### פרוצדורה 1: auto_rate_events_without_review
+### PROCEDURE 1
+פרוצדורה 1: auto_rate_events_without_review
 #### תיאור מילולי של התוכנית:
 פרוצדורה זו מוסיפה ביקורות אוטומטיות לאירועים שלקוחות השתתפו בהם אך לא כתבו עליהם ביקורת. נעשה שימוש ב־Cursor, לולאה, DML ו־Exception.
 #### הקוד שלה:
@@ -578,7 +588,8 @@ $$;
 #### הוכחה שהתוכנית אכן עובדת:
 
 
-### פרוצדורה 2: distribute_sponsor_bonus
+### PROCEDURE 2
+פרוצדורה 2: distribute_sponsor_bonus
 #### תיאור מילולי של התוכנית:
 הפרוצדורה מוסיפה בונוס של 100 ש"ח לספונסרים שתמכו באירועים עם מעל 50 כרטיסים. כוללת לולאות, בדיקות, DML ו־Exception.
 #### הקוד שלה:
@@ -615,7 +626,8 @@ $$;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### פרוצדורה נוספת: remove_old_events(p_cutoff_date DATE)
+### Additional PROCEDURE 
+פרוצדורה נוספת: remove_old_events(p_cutoff_date DATE)
 #### תיאור מילולי של התוכנית:
 הפרוצדורה מוחקת את כל האירועים שהתרחשו לפני תאריך מסוים, כולל מחיקת כרטיסים, ביקורות, קשרים עם מופיעים וספונסרים. מתאימה לארגון נתונים היסטוריים ותחזוקת מסד הנתונים.
 #### הקוד שלה:
@@ -653,7 +665,8 @@ $$;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### טריגר 1: מניעת מקומות שליליים
+### TRIGGER 1
+טריגר 1: מניעת מקומות שליליים
 #### תיאור מילולי של התוכנית:
 טריגר זה מוודא שאין עדכון של כמות מקומות זמינים באירועים למספר שלילי.
 #### הקוד שלה:
@@ -674,7 +687,8 @@ EXECUTE FUNCTION trg_prevent_negative_seats();
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### טריגר 2: עדכון תאריך ביקורת אוטומטי
+### TRIGGER 2
+טריגר 2: עדכון תאריך ביקורת אוטומטי
 #### תיאור מילולי של התוכנית:
 טריגר שמעדכן את תאריך הביקורת לתאריך הנוכחי אם שונו הדירוג או הטקסט של הביקורת.
 #### הקוד שלה:
@@ -697,7 +711,8 @@ EXECUTE FUNCTION trg_update_review_date();
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### תוכנית ראשית 1: קריאה לפרוצדורה + פונקציה עם cursor
+### Main Program 1
+תוכנית ראשית 1: קריאה לפרוצדורה + פונקציה עם cursor
 #### תיאור מילולי של התוכנית:
 התוכנית מזמנת את הפרוצדורה להוספת ביקורות אוטומטיות ולאחר מכן את הפונקציה שמחזירה מידע על אירועים של לקוח.
 #### הקוד שלה:
@@ -726,7 +741,8 @@ $$;
 
 #### הוכחה שהתוכנית אכן עובדת:
 
-### תוכנית ראשית 2: עדכון כמות מקומות ופרס לספונסרים
+### Main Program 2
+תוכנית ראשית 2: עדכון כמות מקומות ופרס לספונסרים
 #### תיאור מילולי של התוכנית:
 התוכנית קוראת לפונקציה שמפחיתה מקום פנוי באירוע מסוים, ולאחר מכן מפעילה את פרוצדורת חלוקת הבונוס.
 #### הקוד שלה:
