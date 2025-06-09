@@ -14,7 +14,7 @@
   - [DELETE Queries](#DELETE-Queries)  
   - [UPDATE Queries](#UPDATE-Queries)  
   - [Constraints](#Constraints)
-  - [Rollback and Commit](#Rollback_And_Commit)
+  - [Rollback and Commit](#Rollback-And-Commit)
 
 
 ---
@@ -364,6 +364,360 @@ In this phase, we integrated our database with another team’s system. We perfo
 ![e15ac049-b9fb-4022-b7d8-9484d8ec0a42](https://github.com/user-attachments/assets/37cdc204-b997-49d0-9c49-8c86cacfc49a)
 ![5a04687b-7258-4264-a20d-602e57d7cde2](https://github.com/user-attachments/assets/27d0c0a1-cd69-4968-a0c2-66dbe9867e55)
 
+---
+## Phase 4: Programming
+
+### Introduction 
+
+In this phase, we implemented non-trivial PL/pgSQL programs based on our existing database schema. The goal was to enhance the functionality of the system through advanced database logic. Specifically, we developed two functions and two procedures that perform meaningful operations involving multiple tables. In addition, we implemented two triggers to automate behaviors in response to specific data changes. Finally, we wrote two main programs that demonstrate the practical use of the functions and procedures. These programs are designed to showcase our ability to write modular, efficient, and maintainable PL/pgSQL code.
+
+### פונקציה 1: get_customer_events_summary
+
+#### תיאור מילולי של התוכנית:
+פונקציה זו מקבלת מזהה לקוח ומחזירה טבלת סיכום על האירועים שבהם השתתף, כולל מספר הכרטיסים שקנה לכל אירוע והדירוג הממוצע שנתן. הפונקציה משתמשת ב־refcursor להחזרת תוצאות, כוללת לולאה, הסתעפויות, שימוש ב־cursor מפורש, טבלה זמנית ו־exception handling.
+
+#### הקוד שלה:
+CREATE OR REPLACE FUNCTION get_customer_events_summary(p_cusid INT)
+RETURNS refcursor AS $$
+DECLARE
+    ref refcursor;
+    event_rec RECORD;
+    tickets_count INT;
+    avg_rating NUMERIC;
+    event_cursor CURSOR FOR
+        SELECT DISTINCT e.eventid, e.eventdate
+        FROM events e
+        JOIN ticket t ON t.eventid = e.eventid
+        WHERE t.cusid = p_cusid;
+BEGIN
+    CREATE TEMP TABLE IF NOT EXISTS customer_event_summary (
+        eventid INT,
+        eventdate DATE,
+        tickets_purchased INT,
+        avg_rating NUMERIC
+    ) ON COMMIT DROP;
+
+    OPEN event_cursor;
+    LOOP
+        FETCH event_cursor INTO event_rec;
+        EXIT WHEN NOT FOUND;
+
+        SELECT COUNT(*) INTO tickets_count
+        FROM ticket
+        WHERE eventid = event_rec.eventid AND cusid = p_cusid;
+
+        SELECT AVG(rating)::NUMERIC INTO avg_rating
+        FROM reviews
+        WHERE eventid = event_rec.eventid AND cusid = p_cusid;
+
+        IF avg_rating IS NULL THEN
+            avg_rating := 0;
+        END IF;
+
+        INSERT INTO customer_event_summary
+        VALUES (event_rec.eventid, event_rec.eventdate, tickets_count, avg_rating);
+    END LOOP;
+    CLOSE event_cursor;
+
+    OPEN ref FOR SELECT * FROM customer_event_summary;
+    RETURN ref;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'An error occurred: %', SQLERRM;
+        RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### פונקציה 2: check_event_status_and_update
+
+#### תיאור מילולי של התוכנית:
+הפונקציה מקבלת מזהה אירוע, בודקת האם נותרו מקומות פנויים ואם כן מקטינה את מספרם באחד ומחזירה TRUE. אם לא – מחזירה FALSE. כוללת הסתעפות, DML, טיפול בשגיאות.
+#### הקוד שלה:
+-- פונקציה 2: החזרת שיעור ניצול אולם (כמה מקומות נתפסו)
+-- כוללת רשומות, הסתעפות, חישוב, וטיפול בשגיאות
+CREATE OR REPLACE FUNCTION get_venue_utilization_rate(p_venid INT)
+RETURNS NUMERIC AS $$
+DECLARE
+    total_capacity INT; -- סך המקומות האפשריים בכל האירועים באולם
+    total_sold INT;     -- סך הכרטיסים שנמכרו
+    utilization NUMERIC; -- שיעור הניצול המחושב
+BEGIN
+    -- שליפת סך הקיבולת לפי האירועים באותו אולם
+    SELECT SUM(v.capacity) INTO total_capacity
+    FROM venue v
+    JOIN events e ON e.venid = v.venid
+    WHERE v.venid = p_venid;
+
+    -- שליפת סך הכרטיסים שנמכרו באירועים באותו אולם
+    SELECT COUNT(*) INTO total_sold
+    FROM ticket t
+    JOIN events e ON t.eventid = e.eventid
+    WHERE e.venid = p_venid;
+
+    -- בדיקה אם אין קיבולת (למניעת חלוקה באפס)
+    IF total_capacity IS NULL OR total_capacity = 0 THEN
+        RETURN 0;
+    END IF;
+
+    -- חישוב שיעור הניצול באחוזים
+    utilization := (total_sold::NUMERIC / total_capacity) * 100;
+    RETURN ROUND(utilization, 2);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- טיפול בשגיאה כללית
+        RAISE NOTICE 'Error calculating utilization: %', SQLERRM;
+        RETURN 0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### פונקציה נוספת: get_venue_utilization_rate(p_venid INT)
+#### תיאור מילולי של התוכנית:
+הפונקציה מחזירה את אחוז הניצול של האולם (Venue) — כלומר, כמה מקומות בפועל נתפסו מכל המקומות האפשריים בכל האירועים שהתקיימו בו. זה מדד חשוב לבעל האולם לדעת עד כמה הוא מנוצל לאורך זמן.
+#### הקוד שלה:
+CREATE OR REPLACE FUNCTION get_venue_utilization_rate(p_venid INT)
+RETURNS NUMERIC AS $$
+DECLARE
+    total_capacity INT;
+    total_sold INT;
+    utilization NUMERIC;
+BEGIN
+    -- סך כל המקומות האפשריים באירועים באולם הזה
+    SELECT SUM(v.capacity) INTO total_capacity
+    FROM venue v
+    JOIN events e ON e.venid = v.venid
+    WHERE v.venid = p_venid;
+
+    -- סך הכרטיסים שנמכרו באירועים באותו אולם
+    SELECT COUNT(*) INTO total_sold
+    FROM ticket t
+    JOIN events e ON t.eventid = e.eventid
+    WHERE e.venid = p_venid;
+
+    IF total_capacity IS NULL OR total_capacity = 0 THEN
+        RETURN 0;
+    END IF;
+
+    utilization := (total_sold::NUMERIC / total_capacity) * 100;
+    RETURN ROUND(utilization, 2);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Error calculating utilization: %', SQLERRM;
+        RETURN 0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### פרוצדורה 1: auto_rate_events_without_review
+#### תיאור מילולי של התוכנית:
+פרוצדורה זו מוסיפה ביקורות אוטומטיות לאירועים שלקוחות השתתפו בהם אך לא כתבו עליהם ביקורת. נעשה שימוש ב־Cursor, לולאה, DML ו־Exception.
+#### הקוד שלה:
+CREATE OR REPLACE PROCEDURE auto_rate_events_without_review()
+LANGUAGE plpgsql AS $$
+DECLARE
+    rec RECORD;
+    cur CURSOR FOR
+        SELECT DISTINCT t.cusid, t.eventid
+        FROM ticket t
+        LEFT JOIN reviews r ON t.eventid = r.eventid AND t.cusid = r.cusid
+        WHERE r.revid IS NULL;
+    newid INT := 10000;
+BEGIN
+    OPEN cur;
+    LOOP
+        FETCH cur INTO rec;
+        EXIT WHEN NOT FOUND;
+
+        INSERT INTO reviews(revid, rating, revdescription, revdate, cusid, eventid)
+        VALUES (newid, 3, 'Auto-generated review', CURRENT_DATE, rec.cusid, rec.eventid);
+        newid := newid + 1;
+    END LOOP;
+    CLOSE cur;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Failed to auto-rate: %', SQLERRM;
+END;
+$$;
 
 
 
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+
+### פרוצדורה 2: distribute_sponsor_bonus
+#### תיאור מילולי של התוכנית:
+הפרוצדורה מוסיפה בונוס של 100 ש"ח לספונסרים שתמכו באירועים עם מעל 50 כרטיסים. כוללת לולאות, בדיקות, DML ו־Exception.
+#### הקוד שלה:
+CREATE OR REPLACE PROCEDURE distribute_sponsor_bonus()
+LANGUAGE plpgsql AS $$
+DECLARE
+    s RECORD;
+    ticket_count INT;
+BEGIN
+    FOR s IN SELECT DISTINCT s.sponsorid, es.eventid
+             FROM sponsor s
+             JOIN event_sponsor es ON s.sponsorid = es.sponsorid
+    LOOP
+        SELECT COUNT(*) INTO ticket_count
+        FROM ticket
+        WHERE eventid = s.eventid;
+
+        IF ticket_count > 50 THEN
+            UPDATE sponsor
+            SET payment = payment + 100.00
+            WHERE sponsorid = s.sponsorid;
+        END IF;
+    END LOOP;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Bonus distribution failed: %', SQLERRM;
+END;
+$$;
+
+
+
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### פרוצדורה נוספת: remove_old_events(p_cutoff_date DATE)
+#### תיאור מילולי של התוכנית:
+הפרוצדורה מוחקת את כל האירועים שהתרחשו לפני תאריך מסוים, כולל מחיקת כרטיסים, ביקורות, קשרים עם מופיעים וספונסרים. מתאימה לארגון נתונים היסטוריים ותחזוקת מסד הנתונים.
+#### הקוד שלה:
+CREATE OR REPLACE PROCEDURE remove_old_events(p_cutoff_date DATE)
+LANGUAGE plpgsql AS $$
+DECLARE
+    rec RECORD; -- כל שורת אירוע
+BEGIN
+    -- לולאה על כל האירועים הישנים
+    FOR rec IN SELECT eventid FROM events WHERE eventdate < p_cutoff_date
+    LOOP
+        -- מחיקת כל התלויות באירוע: כרטיסים, ביקורות, קישורים לספונסרים ולמופיעים
+        DELETE FROM ticket WHERE eventid = rec.eventid;
+        DELETE FROM reviews WHERE eventid = rec.eventid;
+        DELETE FROM event_performer WHERE eventid = rec.eventid;
+        DELETE FROM event_sponsor WHERE eventid = rec.eventid;
+
+        -- מחיקת האירוע עצמו
+        DELETE FROM events WHERE eventid = rec.eventid;
+    END LOOP;
+
+    RAISE NOTICE 'Events before % have been removed', p_cutoff_date;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- טיפול בשגיאה כללית
+        RAISE NOTICE 'Error removing old events: %', SQLERRM;
+END;
+$$;
+
+
+
+
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### טריגר 1: מניעת מקומות שליליים
+#### תיאור מילולי של התוכנית:
+טריגר זה מוודא שאין עדכון של כמות מקומות זמינים באירועים למספר שלילי.
+#### הקוד שלה:
+CREATE OR REPLACE FUNCTION trg_prevent_negative_seats()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.available_seats < 0 THEN
+        RAISE EXCEPTION 'Cannot have negative seats!';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_check_seats
+BEFORE UPDATE ON events
+FOR EACH ROW
+EXECUTE FUNCTION trg_prevent_negative_seats();
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### טריגר 2: עדכון תאריך ביקורת אוטומטי
+#### תיאור מילולי של התוכנית:
+טריגר שמעדכן את תאריך הביקורת לתאריך הנוכחי אם שונו הדירוג או הטקסט של הביקורת.
+#### הקוד שלה:
+CREATE OR REPLACE FUNCTION trg_update_review_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.rating IS DISTINCT FROM OLD.rating
+       OR NEW.revdescription IS DISTINCT FROM OLD.revdescription THEN
+        NEW.revdate := CURRENT_DATE;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_review_update
+BEFORE UPDATE ON reviews
+FOR EACH ROW
+EXECUTE FUNCTION trg_update_review_date();
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### תוכנית ראשית 1: קריאה לפרוצדורה + פונקציה עם cursor
+#### תיאור מילולי של התוכנית:
+התוכנית מזמנת את הפרוצדורה להוספת ביקורות אוטומטיות ולאחר מכן את הפונקציה שמחזירה מידע על אירועים של לקוח.
+#### הקוד שלה:
+DO $$
+DECLARE
+    ref refcursor;
+    row RECORD;
+BEGIN
+    CALL auto_rate_events_without_review();
+
+    ref := get_customer_events_summary(1);
+
+    LOOP
+        FETCH ref INTO row;
+        EXIT WHEN NOT FOUND;
+        RAISE NOTICE 'EventID: %, Date: %, Tickets: %, AvgRating: %',
+            row.eventid, row.eventdate, row.tickets_purchased, row.avg_rating;
+    END LOOP;
+
+    CLOSE ref;
+END;
+$$;
+
+
+
+
+#### הוכחה שהתוכנית אכן עובדת:
+
+### תוכנית ראשית 2: עדכון כמות מקומות ופרס לספונסרים
+#### תיאור מילולי של התוכנית:
+התוכנית קוראת לפונקציה שמפחיתה מקום פנוי באירוע מסוים, ולאחר מכן מפעילה את פרוצדורת חלוקת הבונוס.
+#### הקוד שלה:
+DO $$
+DECLARE
+    res BOOLEAN;
+BEGIN
+    CALL distribute_sponsor_bonus();
+
+    res := check_event_status_and_update(1);
+    RAISE NOTICE 'Event 1 was updated: %', res;
+END;
+$$;
+
+
+
+#### הוכחה שהתוכנית אכן עובדת:
