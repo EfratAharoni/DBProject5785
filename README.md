@@ -32,10 +32,8 @@
   - [Introduction](#introduction-3)
   - [FUNCTION 1](#function-1)  
   - [FUNCTION 2](#function-2)  
-  - [Additional FUNCTION](#additional-function)  
   - [PROCEDURE 1](#procedure-1)  
   - [PROCEDURE 2](#procedure-2)  
-  - [Additional PROCEDURE](#additional-procedure)  
   - [TRIGGER 1](#trigger-1)  
   - [TRIGGER 2](#trigger-2)  
   - [Main Program 1](#main-program-1)  
@@ -401,362 +399,513 @@ In this phase, we integrated our database with another team’s system. We perfo
 In this phase, we implemented non-trivial PL/pgSQL programs based on our existing database schema. The goal was to enhance the functionality of the system through advanced database logic. Specifically, we developed two functions and two procedures that perform meaningful operations involving multiple tables. In addition, we implemented two triggers to automate behaviors in response to specific data changes. Finally, we wrote two main programs that demonstrate the practical use of the functions and procedures. These programs are designed to showcase our ability to write modular, efficient, and maintainable PL/pgSQL code.
 
 ### FUNCTION 1
-פונקציה 1: get_customer_events_summary
+פונקציה 1 ניהול אירועים וכרטיסיות
+#### תיאור מילולי של הפונקציה:
+הפונקציה אחראית על תהליך רכישת כרטיסים לאירוע מסוים. היא מקבלת מזהה אירוע, מזהה לקוח, מספר כרטיסים ומחיר מקסימלי מותר לכרטיס. הפונקציה מחשבת את המחיר בהתאם לסוג האירוע וגודל האולם, מיישמת הנחות לפי כמות הכרטיסים, יוצרת כרטיסים חדשים בטבלה, ומחזירה מידע על המכירה.
 
-#### תיאור מילולי של התוכנית:
-פונקציה זו מקבלת מזהה לקוח ומחזירה טבלת סיכום על האירועים שבהם השתתף, כולל מספר הכרטיסים שקנה לכל אירוע והדירוג הממוצע שנתן. הפונקציה משתמשת ב־refcursor להחזרת תוצאות, כוללת לולאה, הסתעפויות, שימוש ב־cursor מפורש, טבלה זמנית ו־exception handling.
+#### צילום הרצה:
+![7557bea4-1b3b-4e67-8566-867ee0e0d02b](https://github.com/user-attachments/assets/d99eeef8-bb03-4b53-b469-af2ad41f608f)
 
-#### הקוד שלה:
-CREATE OR REPLACE FUNCTION get_customer_events_summary(p_cusid INT)
-RETURNS refcursor AS $$
-DECLARE
-    ref refcursor;
-    event_rec RECORD;
-    tickets_count INT;
-    avg_rating NUMERIC;
-    event_cursor CURSOR FOR
-        SELECT DISTINCT e.eventid, e.eventdate
-        FROM events e
-        JOIN ticket t ON t.eventid = e.eventid
-        WHERE t.cusid = p_cusid;
-BEGIN
-    CREATE TEMP TABLE IF NOT EXISTS customer_event_summary (
-        eventid INT,
-        eventdate DATE,
-        tickets_purchased INT,
-        avg_rating NUMERIC
-    ) ON COMMIT DROP;
-
-    OPEN event_cursor;
-    LOOP
-        FETCH event_cursor INTO event_rec;
-        EXIT WHEN NOT FOUND;
-
-        SELECT COUNT(*) INTO tickets_count
-        FROM ticket
-        WHERE eventid = event_rec.eventid AND cusid = p_cusid;
-
-        SELECT AVG(rating)::NUMERIC INTO avg_rating
-        FROM reviews
-        WHERE eventid = event_rec.eventid AND cusid = p_cusid;
-
-        IF avg_rating IS NULL THEN
-            avg_rating := 0;
-        END IF;
-
-        INSERT INTO customer_event_summary
-        VALUES (event_rec.eventid, event_rec.eventdate, tickets_count, avg_rating);
-    END LOOP;
-    CLOSE event_cursor;
-
-    OPEN ref FOR SELECT * FROM customer_event_summary;
-    RETURN ref;
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE NOTICE 'An error occurred: %', SQLERRM;
-        RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
-
-#### הוכחה שהתוכנית אכן עובדת:
 
 ### FUNCTION 2
-פונקציה 2: check_event_status_and_update
+פונקציה 2: יצירת דוח מפורט על אירועים עם החזרת Ref Cursor
+#### תיאור מילולי של הפונקציה:
+פונקציה זו יוצרת דוח מפורט על אירועים בטווח תאריכים נתון, תוך סינון לפי דירוג מינימלי. הפלט מוחזר כ־Ref Cursor, המאפשר שליפת תוצאות מרובות בצורה גמישה.
 
-#### תיאור מילולי של התוכנית:
-הפונקציה מקבלת מזהה אירוע, בודקת האם נותרו מקומות פנויים ואם כן מקטינה את מספרם באחד ומחזירה TRUE. אם לא – מחזירה FALSE. כוללת הסתעפות, DML, טיפול בשגיאות.
-#### הקוד שלה:
--- פונקציה 2: החזרת שיעור ניצול אולם (כמה מקומות נתפסו)
--- כוללת רשומות, הסתעפות, חישוב, וטיפול בשגיאות
-CREATE OR REPLACE FUNCTION get_venue_utilization_rate(p_venid INT)
-RETURNS NUMERIC AS $$
-DECLARE
-    total_capacity INT; -- סך המקומות האפשריים בכל האירועים באולם
-    total_sold INT;     -- סך הכרטיסים שנמכרו
-    utilization NUMERIC; -- שיעור הניצול המחושב
-BEGIN
-    -- שליפת סך הקיבולת לפי האירועים באותו אולם
-    SELECT SUM(v.capacity) INTO total_capacity
-    FROM venue v
-    JOIN events e ON e.venid = v.venid
-    WHERE v.venid = p_venid;
-
-    -- שליפת סך הכרטיסים שנמכרו באירועים באותו אולם
-    SELECT COUNT(*) INTO total_sold
-    FROM ticket t
-    JOIN events e ON t.eventid = e.eventid
-    WHERE e.venid = p_venid;
-
-    -- בדיקה אם אין קיבולת (למניעת חלוקה באפס)
-    IF total_capacity IS NULL OR total_capacity = 0 THEN
-        RETURN 0;
-    END IF;
-
-    -- חישוב שיעור הניצול באחוזים
-    utilization := (total_sold::NUMERIC / total_capacity) * 100;
-    RETURN ROUND(utilization, 2);
-
-EXCEPTION
-    WHEN OTHERS THEN
-        -- טיפול בשגיאה כללית
-        RAISE NOTICE 'Error calculating utilization: %', SQLERRM;
-        RETURN 0;
-END;
-$$ LANGUAGE plpgsql;
-
-
-#### הוכחה שהתוכנית אכן עובדת:
-
-### Additional FUNCTION
-פונקציה נוספת: get_venue_utilization_rate(p_venid INT)
-#### תיאור מילולי של התוכנית:
-הפונקציה מחזירה את אחוז הניצול של האולם (Venue) — כלומר, כמה מקומות בפועל נתפסו מכל המקומות האפשריים בכל האירועים שהתקיימו בו. זה מדד חשוב לבעל האולם לדעת עד כמה הוא מנוצל לאורך זמן.
-#### הקוד שלה:
-CREATE OR REPLACE FUNCTION get_venue_utilization_rate(p_venid INT)
-RETURNS NUMERIC AS $$
-DECLARE
-    total_capacity INT;
-    total_sold INT;
-    utilization NUMERIC;
-BEGIN
-    -- סך כל המקומות האפשריים באירועים באולם הזה
-    SELECT SUM(v.capacity) INTO total_capacity
-    FROM venue v
-    JOIN events e ON e.venid = v.venid
-    WHERE v.venid = p_venid;
-
-    -- סך הכרטיסים שנמכרו באירועים באותו אולם
-    SELECT COUNT(*) INTO total_sold
-    FROM ticket t
-    JOIN events e ON t.eventid = e.eventid
-    WHERE e.venid = p_venid;
-
-    IF total_capacity IS NULL OR total_capacity = 0 THEN
-        RETURN 0;
-    END IF;
-
-    utilization := (total_sold::NUMERIC / total_capacity) * 100;
-    RETURN ROUND(utilization, 2);
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE NOTICE 'Error calculating utilization: %', SQLERRM;
-        RETURN 0;
-END;
-$$ LANGUAGE plpgsql;
-
-
-#### הוכחה שהתוכנית אכן עובדת:
+#### צילום הרצה:
+![ac2c6feb-4742-4622-8009-7a74cf44c69a](https://github.com/user-attachments/assets/5148537a-23cf-414b-a808-9d684fd1cd9a)
 
 ### PROCEDURE 1
-פרוצדורה 1: auto_rate_events_without_review
-#### תיאור מילולי של התוכנית:
-פרוצדורה זו מוסיפה ביקורות אוטומטיות לאירועים שלקוחות השתתפו בהם אך לא כתבו עליהם ביקורת. נעשה שימוש ב־Cursor, לולאה, DML ו־Exception.
-#### הקוד שלה:
-CREATE OR REPLACE PROCEDURE auto_rate_events_without_review()
-LANGUAGE plpgsql AS $$
-DECLARE
-    rec RECORD;
-    cur CURSOR FOR
-        SELECT DISTINCT t.cusid, t.eventid
-        FROM ticket t
-        LEFT JOIN reviews r ON t.eventid = r.eventid AND t.cusid = r.cusid
-        WHERE r.revid IS NULL;
-    newid INT := 10000;
-BEGIN
-    OPEN cur;
-    LOOP
-        FETCH cur INTO rec;
-        EXIT WHEN NOT FOUND;
+פרוצדורה 1: עדכון מחירי כרטיסים וניהול מבצעים
+#### תיאור מילולי של הפרוצדורה:
+פרוצדורה זו מבצעת עדכון דינמי של מחירי כרטיסים בהתאם לפרמטרים כגון סוג האירוע, מספר הימים שנותרו עד לתאריך האירוע, והביקוש (תפוסה). הפרוצדורה מתאימה מבצעי הנחה או העלאת מחיר, ומעדכנת את ההיסטוריה בטבלה ייעודית.
 
-        INSERT INTO reviews(revid, rating, revdescription, revdate, cusid, eventid)
-        VALUES (newid, 3, 'Auto-generated review', CURRENT_DATE, rec.cusid, rec.eventid);
-        newid := newid + 1;
-    END LOOP;
-    CLOSE cur;
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE NOTICE 'Failed to auto-rate: %', SQLERRM;
-END;
-$$;
-
-
-
-
-#### הוכחה שהתוכנית אכן עובדת:
-
+#### צילום הרצה:
+![90439bbd-4f7c-4473-8f85-76e57134e92a](https://github.com/user-attachments/assets/c6d621d8-0438-49c4-a4e5-6539ded65c31)
 
 ### PROCEDURE 2
-פרוצדורה 2: distribute_sponsor_bonus
-#### תיאור מילולי של התוכנית:
-הפרוצדורה מוסיפה בונוס של 100 ש"ח לספונסרים שתמכו באירועים עם מעל 50 כרטיסים. כוללת לולאות, בדיקות, DML ו־Exception.
-#### הקוד שלה:
-CREATE OR REPLACE PROCEDURE distribute_sponsor_bonus()
-LANGUAGE plpgsql AS $$
-DECLARE
-    s RECORD;
-    ticket_count INT;
-BEGIN
-    FOR s IN SELECT DISTINCT s.sponsorid, es.eventid
-             FROM sponsor s
-             JOIN event_sponsor es ON s.sponsorid = es.sponsorid
-    LOOP
-        SELECT COUNT(*) INTO ticket_count
-        FROM ticket
-        WHERE eventid = s.eventid;
+פרוצדורה 2: תחזוקה וניקוי נתונים במערכת
+#### תיאור מילולי של הפרוצדורה:
+ביצוע תחזוקה שוטפת לבסיס הנתונים באמצעות ניקוי חכם של נתונים ישנים, יתומים או לא רלוונטיים. הפרוצדורה מבצעת ניקוי מותאם לפי מצב ('SAFE' או 'AGGRESSIVE') וכוללת:
+מחיקת אירועים ישנים ללא פעילות.
+מחיקת כרטיסים יתומים.
+מחיקת ביקורות לא איכותיות.
+סימון לקוחות לא פעילים.
+עדכון סטטיסטיקת אולמות.
 
-        IF ticket_count > 50 THEN
-            UPDATE sponsor
-            SET payment = payment + 100.00
-            WHERE sponsorid = s.sponsorid;
-        END IF;
-    END LOOP;
-
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE NOTICE 'Bonus distribution failed: %', SQLERRM;
-END;
-$$;
-
-
-
-
-
-#### הוכחה שהתוכנית אכן עובדת:
-
-### Additional PROCEDURE 
-פרוצדורה נוספת: remove_old_events(p_cutoff_date DATE)
-#### תיאור מילולי של התוכנית:
-הפרוצדורה מוחקת את כל האירועים שהתרחשו לפני תאריך מסוים, כולל מחיקת כרטיסים, ביקורות, קשרים עם מופיעים וספונסרים. מתאימה לארגון נתונים היסטוריים ותחזוקת מסד הנתונים.
-#### הקוד שלה:
-CREATE OR REPLACE PROCEDURE remove_old_events(p_cutoff_date DATE)
-LANGUAGE plpgsql AS $$
-DECLARE
-    rec RECORD; -- כל שורת אירוע
-BEGIN
-    -- לולאה על כל האירועים הישנים
-    FOR rec IN SELECT eventid FROM events WHERE eventdate < p_cutoff_date
-    LOOP
-        -- מחיקת כל התלויות באירוע: כרטיסים, ביקורות, קישורים לספונסרים ולמופיעים
-        DELETE FROM ticket WHERE eventid = rec.eventid;
-        DELETE FROM reviews WHERE eventid = rec.eventid;
-        DELETE FROM event_performer WHERE eventid = rec.eventid;
-        DELETE FROM event_sponsor WHERE eventid = rec.eventid;
-
-        -- מחיקת האירוע עצמו
-        DELETE FROM events WHERE eventid = rec.eventid;
-    END LOOP;
-
-    RAISE NOTICE 'Events before % have been removed', p_cutoff_date;
-
-EXCEPTION
-    WHEN OTHERS THEN
-        -- טיפול בשגיאה כללית
-        RAISE NOTICE 'Error removing old events: %', SQLERRM;
-END;
-$$;
-
-
-
-
-
-
-#### הוכחה שהתוכנית אכן עובדת:
+#### צילום הרצה:
+![7c08864c-91ab-42ae-bdbd-864453e6c579](https://github.com/user-attachments/assets/08f2e502-6c32-4942-8db4-7aeee92c8297)
 
 ### TRIGGER 1
-טריגר 1: מניעת מקומות שליליים
+טריגר 1: עדכון אוטומטי של מקומות זמינים באירועים
 #### תיאור מילולי של התוכנית:
-טריגר זה מוודא שאין עדכון של כמות מקומות זמינים באירועים למספר שלילי.
-#### הקוד שלה:
-CREATE OR REPLACE FUNCTION trg_prevent_negative_seats()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.available_seats < 0 THEN
-        RAISE EXCEPTION 'Cannot have negative seats!';
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+ניטור בזמן אמת של שינויים בטבלת הכרטיסים (ticket) ועדכון אוטומטי של מספר המקומות הפנויים באירוע הרלוונטי בטבלת events. בנוסף, הטריגר מפעיל התראות, לוגים, וניהול חריגות.
 
-CREATE TRIGGER trg_check_seats
-BEFORE UPDATE ON events
-FOR EACH ROW
-EXECUTE FUNCTION trg_prevent_negative_seats();
+#### צילום הרצה:
+![c6471534-a066-46ca-b464-18550e5ddbb5](https://github.com/user-attachments/assets/8a2cb661-5ea7-4e6c-80bf-2711b8dd9b66)
 
-#### הוכחה שהתוכנית אכן עובדת:
 
 ### TRIGGER 2
-טריגר 2: עדכון תאריך ביקורת אוטומטי
+טריגר 2: בדיקות תקינות וביקורת לביקורות ואירועים
 #### תיאור מילולי של התוכנית:
-טריגר שמעדכן את תאריך הביקורת לתאריך הנוכחי אם שונו הדירוג או הטקסט של הביקורת.
-#### הקוד שלה:
-CREATE OR REPLACE FUNCTION trg_update_review_date()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.rating IS DISTINCT FROM OLD.rating
-       OR NEW.revdescription IS DISTINCT FROM OLD.revdescription THEN
-        NEW.revdate := CURRENT_DATE;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+טריגר שמטרתו לוודא שביקורות (reviews) הן תקינות, אמינות ומבוססות על השתתפות באירוע, ולשמור יומן שינויים (audit trail) מלא לכל פעולה – יצירה, עדכון ומחיקה.
+#### צילום הרצה:
+![dbe21409-48a8-4767-8202-391e1d051b89](https://github.com/user-attachments/assets/149c3bc2-69a5-4261-a4bb-fdbe004f33d0)
 
-CREATE TRIGGER trg_review_update
-BEFORE UPDATE ON reviews
-FOR EACH ROW
-EXECUTE FUNCTION trg_update_review_date();
-
-
-#### הוכחה שהתוכנית אכן עובדת:
 
 ### Main Program 1
-תוכנית ראשית 1: קריאה לפרוצדורה + פונקציה עם cursor
+תוכנית ראשית 1: מכירת כרטיסים ועדכון מחירים
+
 #### תיאור מילולי של התוכנית:
-התוכנית מזמנת את הפרוצדורה להוספת ביקורות אוטומטיות ולאחר מכן את הפונקציה שמחזירה מידע על אירועים של לקוח.
+תוכנית זו מנהלת תהליך מכירת כרטיסים לאירועים ועדכון מחירי הכרטיסים בהתאם לסוג האירוע ומועדו. בתחילה היא מנסה למכור כרטיסים במחיר מרבי שהוגדר, לאחר מכן מעדכנת מחירים עם הנחות ומגבלות על העלאת מחיר, ומבצעת מכירה נוספת כדי לבדוק את השפעת העדכונים. בסיום, התוכנית מפיקה דוחות סיכום וסטטיסטיקות על אירועים ומכירות נוכחיות, ומטפלת בשגיאות במהלך התהליך.
+
 #### הקוד שלה:
+-- MAIN PROGRAM 1: ticket sales + pricing update
 DO $$
 DECLARE
-    ref refcursor;
-    row RECORD;
+    ----------------------------------------------------------------
+    -- פרמטרים ראשוניים למכירת כרטיסים
+    ----------------------------------------------------------------
+    v_event_id      INTEGER := 1;
+    v_customer_id   INTEGER := 1;
+    v_ticket_count  INTEGER := 3;
+    v_max_price     NUMERIC := 200.00;
+
+    ----------------------------------------------------------------
+    -- פרמטרים לעדכון מחירים
+    ----------------------------------------------------------------
+    v_event_type          VARCHAR := 'Concert';
+    v_discount_percentage NUMERIC := 15.0;
+    v_min_days_before     INTEGER := 10;
+
+    ----------------------------------------------------------------
+    -- משתנים לסיכום
+    ----------------------------------------------------------------
+    v_ticket_record   RECORD;
+    v_total_tickets   INTEGER := 0;
+    v_total_revenue   NUMERIC := 0;
+    v_success_cnt     INTEGER := 0;
+    v_error_cnt       INTEGER := 0;
+    v_summary_record  RECORD;
 BEGIN
-    CALL auto_rate_events_without_review();
+    RAISE NOTICE '=== MAIN PROGRAM 1: TICKET SALES AND PRICING MANAGEMENT ===';
+    RAISE NOTICE 'Started at: %', CURRENT_TIMESTAMP;
 
-    ref := get_customer_events_summary(1);
+    /* ------------------------------------------------------------
+       PHASE 1 – ניסיון מכירת כרטיסים
+    ------------------------------------------------------------ */
+    RAISE NOTICE 'PHASE 1: SELLING TICKETS';
+    RAISE NOTICE 'Attempting to sell % tickets for event % to customer %',
+                 v_ticket_count, v_event_id, v_customer_id;
 
+    BEGIN
+        FOR v_ticket_record IN
+            SELECT * FROM manage_ticket_sales(
+                v_event_id,
+                v_customer_id,
+                v_ticket_count,
+                v_max_price)
+        LOOP
+            IF v_ticket_record.sale_status = 'SOLD' THEN
+                v_success_cnt   := v_success_cnt + 1;
+                v_total_revenue := v_total_revenue + v_ticket_record.final_price;
+
+                RAISE NOTICE
+                      'SUCCESS: Ticket ID % sold for $%  (seats remaining: %)',
+                      v_ticket_record.ticket_id,
+                      v_ticket_record.final_price,
+                      v_ticket_record.seats_remaining;
+            ELSE
+                v_error_cnt := v_error_cnt + 1;
+                RAISE NOTICE 'FAILED: %', v_ticket_record.sale_status;
+            END IF;
+        END LOOP;
+
+        v_total_tickets := v_success_cnt;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'ERROR in ticket sales: %', SQLERRM;
+            v_error_cnt := v_error_cnt + 1;
+    END;
+
+    RAISE NOTICE '';
+    RAISE NOTICE 'PHASE 1 RESULTS – sold:%  failed:%  revenue:$%',
+                 v_success_cnt,
+                 v_error_cnt,
+                 ROUND(v_total_revenue,2);
+
+    /* ------------------------------------------------------------
+       PHASE 2 – עדכון מחירים
+    ------------------------------------------------------------ */
+    RAISE NOTICE '';
+    RAISE NOTICE 'PHASE 2: UPDATING TICKET PRICING';
+    RAISE NOTICE 'Event type: %  |  Discount: % %%  |  Min‑days: %',
+                 v_event_type,
+                 v_discount_percentage,
+                 v_min_days_before;
+
+    BEGIN
+        CALL update_ticket_pricing_and_promotions(
+            v_event_type,
+            v_discount_percentage,
+            v_min_days_before,
+            50.00   -- max price increase
+        );
+        RAISE NOTICE 'Pricing update completed successfully';
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'ERROR in pricing update: %', SQLERRM;
+    END;
+
+    /* ------------------------------------------------------------
+       PHASE 3 – מכירה נוספת אחרי שינוי מחירים
+    ------------------------------------------------------------ */
+    RAISE NOTICE '';
+    RAISE NOTICE 'PHASE 3: SELLING ADDITIONAL TICKETS AFTER PRICING UPDATE';
+
+    v_event_id     := 2;
+    v_customer_id  := 2;
+    v_ticket_count := 2;
+    v_success_cnt  := 0;
+    v_error_cnt    := 0;
+
+    BEGIN
+        FOR v_ticket_record IN
+            SELECT * FROM manage_ticket_sales(
+                v_event_id,
+                v_customer_id,
+                v_ticket_count,
+                v_max_price)
+        LOOP
+            IF v_ticket_record.sale_status = 'SOLD' THEN
+                v_success_cnt   := v_success_cnt + 1;
+                v_total_revenue := v_total_revenue + v_ticket_record.final_price;
+
+                RAISE NOTICE
+                      'SUCCESS: Ticket ID % sold for $%',
+                      v_ticket_record.ticket_id,
+                      v_ticket_record.final_price;
+            ELSE
+                v_error_cnt := v_error_cnt + 1;
+                RAISE NOTICE 'FAILED: %', v_ticket_record.sale_status;
+            END IF;
+        END LOOP;
+
+        v_total_tickets := v_total_tickets + v_success_cnt;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'ERROR in additional ticket sales: %', SQLERRM;
+    END;
+
+    /* ------------------------------------------------------------
+       PHASE 4 – דוח סיכום
+    ------------------------------------------------------------ */
+    RAISE NOTICE '';
+    RAISE NOTICE 'PHASE 4: SUMMARY REPORT';
+
+    -- סטטיסטיקה על אירועים עתידיים
+    FOR v_summary_record IN
+        SELECT COUNT(*)  AS total_events,
+               SUM(CASE WHEN available_seats = 0 THEN 1 ELSE 0 END) AS sold_out,
+               AVG(available_seats) AS avg_avail
+        FROM   events
+        WHERE  eventdate >= CURRENT_DATE
     LOOP
-        FETCH ref INTO row;
-        EXIT WHEN NOT FOUND;
-        RAISE NOTICE 'EventID: %, Date: %, Tickets: %, AvgRating: %',
-            row.eventid, row.eventdate, row.tickets_purchased, row.avg_rating;
+        RAISE NOTICE 'Upcoming events: % | Sold‑out: % | Avg seats left: %',
+                     v_summary_record.total_events,
+                     v_summary_record.sold_out,
+                     COALESCE(ROUND(v_summary_record.avg_avail),0);
     END LOOP;
 
-    CLOSE ref;
+    -- סטטיסטיקה של מכירות היום
+    FOR v_summary_record IN
+        SELECT COUNT(*) AS tickets_today,
+               SUM(price) AS revenue_today,
+               AVG(price) AS avg_price_today
+        FROM   ticket
+        WHERE  saledate = CURRENT_DATE
+    LOOP
+        RAISE NOTICE 'Today – tickets:%  revenue:$%  avg price:$%',
+                     v_summary_record.tickets_today,
+                     COALESCE(ROUND(v_summary_record.revenue_today,2),0),
+                     COALESCE(ROUND(v_summary_record.avg_price_today,2),0);
+    END LOOP;
+
+    /* ------------------------------------------------------------
+       סיכום כולל
+    ------------------------------------------------------------ */
+    RAISE NOTICE '';
+    RAISE NOTICE '=== PROGRAM EXECUTION SUMMARY ===';
+    RAISE NOTICE 'Total tickets sold: %', v_total_tickets;
+    RAISE NOTICE 'Total revenue:      $%', ROUND(v_total_revenue,2);
+    RAISE NOTICE 'Completed at: %',    CURRENT_TIMESTAMP;
+
+    COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'CRITICAL ERROR in main program: %', SQLERRM;
+        ROLLBACK;
 END;
 $$;
 
-
-
-
 #### הוכחה שהתוכנית אכן עובדת:
+![8b0fdbe3-b89e-4c21-91d2-ecc8f5d90261](https://github.com/user-attachments/assets/dd15fa70-e92d-47a2-82d2-209501151e05)
+![613d1112-42d1-4e29-ac6a-1cfdb36c43f2](https://github.com/user-attachments/assets/41806604-5da0-4dfd-aa41-c8f3ae2c7beb)
+
+
 
 ### Main Program 2
 תוכנית ראשית 2: עדכון כמות מקומות ופרס לספונסרים
 #### תיאור מילולי של התוכנית:
-התוכנית קוראת לפונקציה שמפחיתה מקום פנוי באירוע מסוים, ולאחר מכן מפעילה את פרוצדורת חלוקת הבונוס.
+התוכנית מפיקה דוח מפורט על האירועים, מבצעת עדכוני מחירים חכמים לפי מצב התפוסה, מבצעת תחזוקה וניקוי של אירועים ישנים במידת הצורך, ומסכמת את כל התהליך עם דוחות, המלצות ומעקב שגיאות.
+
 #### הקוד שלה:
+-- תוכנית ראשית - מערכת ניהול אירועים משולבת (גרסה מתוקנת)
+-- משלבת דוח אירועים + עדכון מחירים + ניקוי מערכת
+
 DO $$
 DECLARE
-    res BOOLEAN;
+    -- משתנים עיקריים
+    v_report_cursor REFCURSOR;
+    v_event_record RECORD;
+    v_processed_events INTEGER := 0;
+    v_high_revenue_events INTEGER := 0;
+    v_low_occupancy_events INTEGER := 0;
+    
+    -- פרמטרים לדוח
+    v_start_date DATE := CURRENT_DATE - INTERVAL '60 days';
+    v_end_date DATE := CURRENT_DATE + INTERVAL '30 days';
+    v_min_rating INTEGER := 3;
+    
+    -- פרמטרים לעדכון מחירים
+    v_concert_discount NUMERIC := 15.0;
+    v_theater_discount NUMERIC := 10.0;
+    v_days_threshold INTEGER := 14;
+    
+    -- משתנים סטטיסטיים
+    v_total_revenue NUMERIC := 0;
+    v_avg_occupancy NUMERIC := 0;
+    v_events_needing_promotion INTEGER := 0;
+    
+    -- Exception handling
+    v_error_count INTEGER := 0;
+    v_current_operation VARCHAR(100);
+    
 BEGIN
-    CALL distribute_sponsor_bonus();
-
-    res := check_event_status_and_update(1);
-    RAISE NOTICE 'Event 1 was updated: %', res;
+    RAISE NOTICE '=== התחלת תוכנית ניהול אירועים משולבת ===';
+    RAISE NOTICE 'תאריך התחלה: %', v_start_date;
+    RAISE NOTICE 'תאריך סיום: %', v_end_date;
+    RAISE NOTICE 'דירוג מינימלי: %', v_min_rating;
+    
+    -- שלב 1: יצירת דוח מפורט על אירועים
+    BEGIN
+        v_current_operation := 'Creating events report';
+        RAISE NOTICE '';
+        RAISE NOTICE '--- שלב 1: יצירת דוח אירועים ---';
+        
+        -- קריאה לפונקציה get_events_report
+        SELECT get_events_report(v_start_date, v_end_date, v_min_rating) 
+        INTO v_report_cursor;
+        
+        -- עיבוד תוצאות הדוח
+        LOOP
+            FETCH v_report_cursor INTO v_event_record;
+            EXIT WHEN NOT FOUND;
+            
+            v_processed_events := v_processed_events + 1;
+            v_total_revenue := v_total_revenue + COALESCE(v_event_record.event_revenue, 0);
+            
+            -- זיהוי אירועים בעלי הכנסות גבוהות
+            IF v_event_record.event_revenue > 5000 THEN
+                v_high_revenue_events := v_high_revenue_events + 1;
+                RAISE NOTICE 'אירוע רווחי: % - סוג: % - הכנסות: $%', 
+                           v_event_record.eventid, 
+                           v_event_record.eventtype,
+                           v_event_record.event_revenue;
+            END IF;
+            
+            -- זיהוי אירועים עם תפוסה נמוכה הזקוקים לקידום
+            IF v_event_record.occupancy_rate < 50 
+               AND v_event_record.eventdate > CURRENT_DATE THEN
+                v_low_occupancy_events := v_low_occupancy_events + 1;
+                v_events_needing_promotion := v_events_needing_promotion + 1;
+                
+                RAISE NOTICE 'אירוע זקוק לקידום: % - תפוסה: %', 
+                           v_event_record.eventid,
+                           ROUND(v_event_record.occupancy_rate, 1);
+                RAISE NOTICE '  מקומות זמינים: %', v_event_record.available_seats;
+            END IF;
+            
+            -- חישוב ממוצע תפוסה
+            v_avg_occupancy := v_avg_occupancy + COALESCE(v_event_record.occupancy_rate, 0);
+            
+            -- הדפסת פרטי אירוע מעניינים (רק לאירועים הראשונים)
+            IF v_processed_events <= 3 THEN
+                RAISE NOTICE 'אירוע %: % ב-%', 
+                           v_event_record.eventid,
+                           v_event_record.eventtype,
+                           v_event_record.venname;
+                RAISE NOTICE '  תאריך: % - תפוסה: %', 
+                           v_event_record.eventdate,
+                           ROUND(v_event_record.occupancy_rate, 1);
+                RAISE NOTICE '  ביקורות: % - דירוג ממוצע: %', 
+                           v_event_record.total_reviews,
+                           ROUND(v_event_record.average_rating, 2);
+            END IF;
+        END LOOP;
+        
+        CLOSE v_report_cursor;
+        
+        -- חישוב סטטיסטיקות
+        IF v_processed_events > 0 THEN
+            v_avg_occupancy := v_avg_occupancy / v_processed_events;
+        END IF;
+        
+        RAISE NOTICE 'סיכום דוח: % אירועים נמצאו', v_processed_events;
+        RAISE NOTICE 'סה"כ הכנסות: $%', ROUND(v_total_revenue, 2);
+        RAISE NOTICE 'ממוצע תפוסה: %', ROUND(v_avg_occupancy, 2);
+                     
+    EXCEPTION
+        WHEN OTHERS THEN
+            v_error_count := v_error_count + 1;
+            RAISE NOTICE 'שגיאה בשלב %: %', v_current_operation, SQLERRM;
+    END;
+    
+    -- שלב 2: עדכון מחירי כרטיסים לאירועים זקוקים לקידום
+    BEGIN
+        v_current_operation := 'Updating ticket pricing';
+        RAISE NOTICE '';
+        RAISE NOTICE '--- שלב 2: עדכון מחירי כרטיסים ---';
+        
+        IF v_events_needing_promotion > 0 THEN
+            RAISE NOTICE 'מעדכן מחירים עבור אירועי קונצרטים';
+            RAISE NOTICE 'הנחה: %', v_concert_discount;
+            
+            -- עדכון מחירים לקונצרטים
+            CALL update_ticket_pricing_and_promotions(
+                p_event_type := 'Concert',
+                p_discount_percentage := v_concert_discount,
+                p_min_days_before_event := v_days_threshold,
+                p_max_price_increase := 30.0
+            );
+            
+            RAISE NOTICE 'מעדכן מחירים עבור אירועי תיאטרון';
+            RAISE NOTICE 'הנחה: %', v_theater_discount;
+            
+            -- עדכון מחירים לתיאטרון
+            CALL update_ticket_pricing_and_promotions(
+                p_event_type := 'Theater',
+                p_discount_percentage := v_theater_discount,
+                p_min_days_before_event := v_days_threshold,
+                p_max_price_increase := 25.0
+            );
+        ELSE
+            RAISE NOTICE 'לא נמצאו אירועים הזקוקים לעדכון מחירים';
+        END IF;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            v_error_count := v_error_count + 1;
+            RAISE NOTICE 'שגיאה בשלב %: %', v_current_operation, SQLERRM;
+    END;
+    
+    -- שלב 3: ניקוי מערכת אם יש הרבה אירועים ישנים
+    BEGIN
+        v_current_operation := 'System maintenance cleanup';
+        RAISE NOTICE '';
+        RAISE NOTICE '--- שלב 3: בדיקת צורך בניקוי מערכת ---';
+        
+        DECLARE
+            v_old_events_count INTEGER;
+        BEGIN
+            -- בדיקת כמות אירועים ישנים
+            SELECT COUNT(*)
+            INTO v_old_events_count
+            FROM events
+            WHERE eventdate < CURRENT_DATE - INTERVAL '180 days';
+            
+            RAISE NOTICE 'נמצאו % אירועים ישנים (מעל 180 יום)', v_old_events_count;
+            
+            IF v_old_events_count > 100 THEN
+                RAISE NOTICE 'מפעיל ניקוי מערכת במצב AGGRESSIVE';
+                
+                CALL system_maintenance_cleanup(
+                    p_days_old := 365,
+                    p_cleanup_mode := 'AGGRESSIVE'
+                );
+            ELSIF v_old_events_count > 50 THEN
+                RAISE NOTICE 'מפעיל ניקוי מערכת במצב SAFE';
+                
+                CALL system_maintenance_cleanup(
+                    p_days_old := 180,
+                    p_cleanup_mode := 'SAFE'
+                );
+            ELSE
+                RAISE NOTICE 'לא נדרש ניקוי מערכת כרגע';
+            END IF;
+        END;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            v_error_count := v_error_count + 1;
+            RAISE NOTICE 'שגיאה בשלב %: %', v_current_operation, SQLERRM;
+    END;
+    
+    -- שלב 4: סיכום ודיווח
+    BEGIN
+        v_current_operation := 'Final summary';
+        RAISE NOTICE '';
+        RAISE NOTICE '=== סיכום תוכנית ניהול אירועים ===';
+        RAISE NOTICE 'אירועים שעובדו: %', v_processed_events;
+        RAISE NOTICE 'אירועים רווחיים: %', v_high_revenue_events;
+        RAISE NOTICE 'אירועים עם תפוסה נמוכה: %', v_low_occupancy_events;
+        RAISE NOTICE 'סה"כ הכנסות: $%', ROUND(v_total_revenue, 2);
+        RAISE NOTICE 'ממוצע תפוסה: %', ROUND(v_avg_occupancy, 2);
+        RAISE NOTICE 'שגיאות שאירעו: %', v_error_count;
+        
+        -- המלצות בהתבסס על הנתונים
+        RAISE NOTICE '';
+        RAISE NOTICE '--- המלצות ---';
+        
+        IF v_avg_occupancy < 60 THEN
+            RAISE NOTICE '• ממוצע התפוסה נמוך - מומלץ לשפר אסטרטגיות שיווק';
+        END IF;
+        
+        IF v_low_occupancy_events > (v_processed_events * 0.3) THEN
+            RAISE NOTICE '• יותר מ-30 אחוז מהאירועים עם תפוסה נמוכה';
+            RAISE NOTICE '  מומלץ לבחון מחירים והיצע';
+        END IF;
+        
+        IF v_high_revenue_events > 0 THEN
+            RAISE NOTICE '• יש % אירועים רווחיים', v_high_revenue_events;
+            RAISE NOTICE '  מומלץ לנתח מה הופך אותם למוצלחים';
+        END IF;
+        
+        IF v_error_count = 0 THEN
+            RAISE NOTICE '✓ התוכנית הושלמה בהצלחה ללא שגיאות!';
+        ELSE
+            RAISE NOTICE '⚠ התוכנית הושלמה עם % שגיאות', v_error_count;
+            RAISE NOTICE '  יש לבדוק הלוגים';
+        END IF;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE 'שגיאה חמורה בסיכום: %', SQLERRM;
+    END;
+    
+    RAISE NOTICE '=== סיום תוכנית ניהול אירועים ===';
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'שגיאה כללית בתוכנית: %', SQLERRM;
+        RAISE;
 END;
 $$;
 
-
-
 #### הוכחה שהתוכנית אכן עובדת:
+![image](https://github.com/user-attachments/assets/93e58e7a-ba02-46ea-ab46-a1dcc6db3cf3)
+![image](https://github.com/user-attachments/assets/db079fab-fec2-400f-97cb-bd6807c18797)
+
