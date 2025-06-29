@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Play, FileText, Database, Clock, Download } from "lucide-react"
+import { ArrowLeft, Play, FileText, Database, Clock, Download, AlertCircle } from "lucide-react"
 import Link from "next/link"
 
 interface QueryResult {
@@ -20,6 +20,17 @@ interface QueryResult {
   rowCount?: number
   data?: any[]
   error?: string
+  errorCode?: string
+}
+
+interface QueryResponse {
+  success: boolean
+  data?: any[]
+  rowCount?: number
+  executionTime?: string
+  error?: string
+  code?: string
+  fields?: Array<{ name: string; dataTypeID: number }>
 }
 
 export default function QueriesPage() {
@@ -75,16 +86,22 @@ ORDER BY total_spent DESC;`,
     v.venname,
     v.capacity,
     COUNT(e.eventid) as total_events,
-    AVG(v.capacity - e.available_seats) as avg_attendance,
-    ROUND((AVG(v.capacity - e.available_seats)::NUMERIC / v.capacity) * 100, 2) as avg_occupancy_rate,
-    SUM(COALESCE(ticket_revenue.revenue, 0)) as total_revenue
+    COALESCE(SUM(ticket_counts.tickets_sold), 0) as total_tickets_sold,
+    COALESCE(SUM(ticket_counts.total_revenue), 0) as total_revenue,
+    CASE 
+        WHEN v.capacity > 0 THEN ROUND((COALESCE(AVG(ticket_counts.tickets_sold), 0) / v.capacity) * 100, 2)
+        ELSE 0 
+    END as avg_occupancy_rate
 FROM venue v
 LEFT JOIN events e ON v.venid = e.venid
 LEFT JOIN (
-    SELECT eventid, SUM(price) as revenue
+    SELECT 
+        eventid, 
+        COUNT(ticketid) as tickets_sold, 
+        SUM(price) as total_revenue
     FROM ticket
     GROUP BY eventid
-) ticket_revenue ON e.eventid = ticket_revenue.eventid
+) ticket_counts ON e.eventid = ticket_counts.eventid
 GROUP BY v.venid, v.venname, v.capacity
 ORDER BY total_revenue DESC;`,
     },
@@ -97,7 +114,7 @@ ORDER BY total_revenue DESC;`,
     e.eventdate,
     v.venname,
     COUNT(r.revid) as review_count,
-    AVG(r.rating) as avg_rating,
+    ROUND(AVG(r.rating), 2) as avg_rating,
     MIN(r.rating) as min_rating,
     MAX(r.rating) as max_rating,
     COUNT(CASE WHEN r.rating >= 4 THEN 1 END) as positive_reviews,
@@ -109,15 +126,54 @@ GROUP BY e.eventid, e.eventtype, e.eventdate, v.venname
 HAVING COUNT(r.revid) > 0
 ORDER BY avg_rating DESC, review_count DESC;`,
     },
+    {
+      name: "Database Tables Overview",
+      description: "Show all tables in the database",
+      query: `SELECT 
+    table_name,
+    table_type
+FROM information_schema.tables 
+WHERE table_schema = 'public'
+ORDER BY table_name;`,
+    },
+    {
+      name: "Venue List",
+      description: "List all venues with their details",
+      query: `SELECT 
+    venid,
+    venname,
+    location,
+    capacity,
+    rental_price,
+    parking
+FROM venue
+ORDER BY venname;`,
+    },
+    {
+      name: "Recent Tickets Sales",
+      description: "Show recent ticket sales in the last 30 days",
+      query: `SELECT 
+    t.ticketid,
+    t.price,
+    t.saledate,
+    e.eventtype,
+    e.eventdate,
+    v.venname,
+    c.cusname
+FROM ticket t
+JOIN events e ON t.eventid = e.eventid
+JOIN venue v ON e.venid = v.venid
+JOIN customers c ON t.cusid = c.cusid
+WHERE t.saledate >= CURRENT_DATE - INTERVAL '30 days'
+ORDER BY t.saledate DESC
+LIMIT 20;`,
+    }
   ]
 
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem("authenticated")
-    if (!isAuthenticated) {
-      router.push("/")
-      return
-    }
-  }, [router])
+    // Remove localStorage check for demo purposes
+    // In production, implement proper authentication
+  }, [])
 
   const handleQuerySelect = (queryName: string) => {
     const query = predefinedQueries.find((q) => q.name === queryName)
@@ -137,121 +193,87 @@ ORDER BY avg_rating DESC, review_count DESC;`,
     setError("")
     setSuccess("")
 
+    const newResult: QueryResult = {
+      id: Date.now(), // Use timestamp as unique ID
+      query: customQuery,
+      status: "running",
+      executionTime: new Date().toLocaleString(),
+    }
+
+    setQueryResults((prev) => [newResult, ...prev])
+
     try {
-      const newResult: QueryResult = {
-        id: queryResults.length + 1,
-        query: customQuery,
-        status: "running",
-        executionTime: new Date().toLocaleString(),
-      }
+      const response = await fetch('/api/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: customQuery }),
+      })
 
-      setQueryResults((prev) => [newResult, ...prev])
+      const result: QueryResponse = await response.json()
 
-      // Simulate query execution
-      setTimeout(() => {
-        // Generate mock data based on query type
-        let mockData: any[] = []
-        let rowCount = 0
-
-        if (customQuery.toLowerCase().includes("events")) {
-          mockData = [
-            {
-              eventid: 1,
-              eventtype: "Concert",
-              eventdate: "2024-07-15",
-              venname: "Madison Square Garden",
-              tickets_sold: 15000,
-              total_revenue: 750000,
-            },
-            {
-              eventid: 2,
-              eventtype: "Sports",
-              eventdate: "2024-08-20",
-              venname: "Hollywood Bowl",
-              tickets_sold: 12000,
-              total_revenue: 600000,
-            },
-            {
-              eventid: 3,
-              eventtype: "Theater",
-              eventdate: "2024-09-10",
-              venname: "Red Rocks Amphitheatre",
-              tickets_sold: 8000,
-              total_revenue: 400000,
-            },
-          ]
-          rowCount = 3
-        } else if (customQuery.toLowerCase().includes("customers")) {
-          mockData = [
-            {
-              cusid: 1,
-              cusname: "John Smith",
-              cusemail: "john@email.com",
-              tickets_purchased: 5,
-              reviews_written: 3,
-              avg_rating_given: 4.2,
-              total_spent: 250,
-            },
-            {
-              cusid: 2,
-              cusname: "Sarah Johnson",
-              cusemail: "sarah@email.com",
-              tickets_purchased: 8,
-              reviews_written: 5,
-              avg_rating_given: 4.5,
-              total_spent: 400,
-            },
-            {
-              cusid: 3,
-              cusname: "Michael Brown",
-              cusemail: "michael@email.com",
-              tickets_purchased: 3,
-              reviews_written: 2,
-              avg_rating_given: 3.8,
-              total_spent: 150,
-            },
-          ]
-          rowCount = 3
-        } else {
-          mockData = [
-            { column1: "Sample Data", column2: "Value 1", column3: 123 },
-            { column1: "Sample Data", column2: "Value 2", column3: 456 },
-          ]
-          rowCount = 2
-        }
-
+      if (result.success && result.data) {
         const completedResult: QueryResult = {
           ...newResult,
           status: "completed",
-          rowCount,
-          data: mockData,
+          rowCount: result.rowCount || 0,
+          data: result.data,
+          executionTime: result.executionTime || "N/A",
         }
 
-        setQueryResults((prev) => prev.map((result) => (result.id === newResult.id ? completedResult : result)))
+        setQueryResults((prev) => 
+          prev.map((r) => (r.id === newResult.id ? completedResult : r))
+        )
 
-        setSuccess(`Query executed successfully! ${rowCount} rows returned.`)
-        setIsExecuting(false)
-      }, 2000)
-    } catch (err) {
-      setError("Failed to execute query. Please check your SQL syntax.")
+        setSuccess(`Query executed successfully! ${result.rowCount || 0} rows returned in ${result.executionTime || "N/A"}.`)
+      } else {
+        throw new Error(result.error || 'Unknown error occurred')
+      }
+    } catch (err: any) {
+      const failedResult: QueryResult = {
+        ...newResult,
+        status: "failed",
+        error: err.message || "Failed to execute query",
+        errorCode: err.code || "UNKNOWN_ERROR",
+      }
+
+      setQueryResults((prev) => 
+        prev.map((r) => (r.id === newResult.id ? failedResult : r))
+      )
+
+      setError(err.message || "Failed to execute query. Please check your SQL syntax.")
+    } finally {
       setIsExecuting(false)
     }
   }
 
   const exportResults = (result: QueryResult) => {
-    if (!result.data) return
+    if (!result.data || result.data.length === 0) return
 
-    const csv = [Object.keys(result.data[0]).join(","), ...result.data.map((row) => Object.values(row).join(","))].join(
-      "\n",
-    )
+    const headers = Object.keys(result.data[0])
+    const csvContent = [
+      headers.join(","),
+      ...result.data.map((row) => 
+        headers.map(header => {
+          const value = row[header]
+          // Handle null/undefined values and escape commas
+          if (value === null || value === undefined) return ""
+          const stringValue = String(value)
+          return stringValue.includes(",") ? `"${stringValue}"` : stringValue
+        }).join(",")
+      )
+    ].join("\n")
 
-    const blob = new Blob([csv], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `query_result_${result.id}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    const link = document.createElement("a")
+    const url = URL.createObjectURL(blob)
+    link.setAttribute("href", url)
+    link.setAttribute("download", `query_result_${result.id}.csv`)
+    link.style.visibility = "hidden"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
@@ -278,6 +300,7 @@ ORDER BY avg_rating DESC, review_count DESC;`,
         {/* Alerts */}
         {error && (
           <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -296,7 +319,13 @@ ORDER BY avg_rating DESC, review_count DESC;`,
                   <Database className="w-5 h-5 mr-2" />
                   Query Editor
                 </CardTitle>
-                <CardDescription>Write and execute SQL queries against your database</CardDescription>
+                <CardDescription>
+                  Write and execute SQL queries against your PostgreSQL database
+                  <br />
+                  <span className="text-xs text-orange-600">
+                    ⚠️ Only SELECT queries are allowed for security reasons
+                  </span>
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -355,7 +384,7 @@ ORDER BY avg_rating DESC, review_count DESC;`,
                 <CardDescription>Recent query executions</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {queryResults.length === 0 ? (
                     <div className="text-center py-8">
                       <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
@@ -376,19 +405,30 @@ ORDER BY avg_rating DESC, review_count DESC;`,
                           >
                             {result.status}
                           </Badge>
-                          {result.status === "completed" && result.data && (
+                          {result.status === "completed" && result.data && result.data.length > 0 && (
                             <Button variant="outline" size="sm" onClick={() => exportResults(result)}>
                               <Download className="w-3 h-3 mr-1" />
                               Export
                             </Button>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 mb-2">{result.executionTime}</p>
-                        <p className="text-xs font-mono bg-gray-50 p-2 rounded">{result.query.substring(0, 100)}...</p>
+                        <p className="text-xs text-gray-500 mb-2">
+                          {typeof result.executionTime === 'string' && result.executionTime.includes('ms') 
+                            ? `Executed in ${result.executionTime}` 
+                            : result.executionTime
+                          }
+                        </p>
+                        <p className="text-xs font-mono bg-gray-50 p-2 rounded">
+                          {result.query.length > 100 ? `${result.query.substring(0, 100)}...` : result.query}
+                        </p>
                         {result.rowCount !== undefined && (
                           <p className="text-xs text-green-600 mt-1">{result.rowCount} rows returned</p>
                         )}
-                        {result.error && <p className="text-xs text-red-600 mt-1">{result.error}</p>}
+                        {result.error && (
+                          <p className="text-xs text-red-600 mt-1">
+                            {result.errorCode && `[${result.errorCode}] `}{result.error}
+                          </p>
+                        )}
                       </div>
                     ))
                   )}
@@ -399,19 +439,21 @@ ORDER BY avg_rating DESC, review_count DESC;`,
         </div>
 
         {/* Query Results */}
-        {queryResults.length > 0 && queryResults[0].data && (
+        {queryResults.length > 0 && queryResults[0].data && queryResults[0].data.length > 0 && (
           <Card className="mt-8">
             <CardHeader>
               <CardTitle>Query Results</CardTitle>
-              <CardDescription>Results from the most recent query execution</CardDescription>
+              <CardDescription>
+                Results from the most recent query execution ({queryResults[0].rowCount} rows)
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-lg overflow-auto">
+              <div className="border rounded-lg overflow-auto max-h-96">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       {Object.keys(queryResults[0].data[0]).map((column) => (
-                        <TableHead key={column}>{column}</TableHead>
+                        <TableHead key={column} className="font-semibold">{column}</TableHead>
                       ))}
                     </TableRow>
                   </TableHeader>
@@ -419,8 +461,14 @@ ORDER BY avg_rating DESC, review_count DESC;`,
                     {queryResults[0].data.map((row, index) => (
                       <TableRow key={index}>
                         {Object.values(row).map((value, cellIndex) => (
-                          <TableCell key={cellIndex}>
-                            {typeof value === "number" ? value.toLocaleString() : String(value)}
+                          <TableCell key={cellIndex} className="max-w-xs truncate">
+                            {value === null || value === undefined ? (
+                              <span className="text-gray-400 italic">null</span>
+                            ) : typeof value === "number" ? (
+                              value.toLocaleString()
+                            ) : (
+                              String(value)
+                            )}
                           </TableCell>
                         ))}
                       </TableRow>

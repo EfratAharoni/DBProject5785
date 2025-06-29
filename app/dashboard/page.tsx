@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Users, Calendar, MapPin, Star, TrendingUp, Database, Settings, FileText, BarChart3, Handshake, Ticket, Building, UserCheck } from "lucide-react"
+import { Users, Calendar, MapPin, Star, TrendingUp, Database, Settings, FileText, BarChart3, Handshake } from "lucide-react"
 import Link from "next/link"
 
 interface DashboardStats {
@@ -181,30 +181,6 @@ export default function Dashboard() {
                   <Button variant="outline" className="w-full justify-start">
                     <Handshake className="mr-2 h-4 w-4" />
                     Manage Sponsors
-                  </Button>
-                </Link>
-                <Link href="/reviews">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Star className="mr-2 h-4 w-4" />
-                    Manage Reviews
-                  </Button>
-                </Link>
-                <Link href="/tickets">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Ticket className="mr-2 h-4 w-4" />
-                    Manage Tickets
-                  </Button>
-                </Link>
-                <Link href="/owners">
-                  <Button variant="outline" className="w-full justify-start">
-                    <UserCheck className="mr-2 h-4 w-4" />
-                    Manage Owners
-                  </Button>
-                </Link>
-                <Link href="/facilities">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Building className="mr-2 h-4 w-4" />
-                    Manage Facilities
                   </Button>
                 </Link>
               </div>
