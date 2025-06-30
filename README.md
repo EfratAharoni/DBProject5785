@@ -38,6 +38,7 @@
   - [TRIGGER 2](#trigger-2)  
   - [Main Program 1](#main-program-1)  
   - [Main Program 2](#main-program-2)  
+- [Phase E – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-e--creating-a-graphical-user-interface-gui-for-working-with-the-database)
 
 
 
@@ -908,4 +909,17 @@ $$;
 #### הוכחה שהתוכנית אכן עובדת:
 ![image](https://github.com/user-attachments/assets/93e58e7a-ba02-46ea-ab46-a1dcc6db3cf3)
 ![image](https://github.com/user-attachments/assets/db079fab-fec2-400f-97cb-bd6807c18797)
+
+
+---
+
+##Phase E – Creating a Graphical User Interface (GUI) for Working with the Database
+
+
+
+
+
+
+
+
 
