@@ -38,7 +38,7 @@
   - [TRIGGER 2](#trigger-2)  
   - [Main Program 1](#main-program-1)  
   - [Main Program 2](#main-program-2)  
-- [Phase E – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-e--creating-a-graphical-user-interface-gui-for-working-with-the-database)
+- [Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-5--creating-a-graphical-user-interface-gui-for-working-with-the-database)
 
 
 
@@ -913,7 +913,7 @@ $$;
 
 ---
 
-##Phase E – Creating a Graphical User Interface (GUI) for Working with the Database
+##Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database
 
 
 
