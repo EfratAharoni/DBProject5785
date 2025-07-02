@@ -29,7 +29,7 @@
   - [Views](#views)  
 
 - [Phase 4: Programming](#phase-4-programming)  
-  - [Introduction](#introduction-3)
+  - [Introduction](#introduction-3)  
   - [FUNCTION 1](#function-1)  
   - [FUNCTION 2](#function-2)  
   - [PROCEDURE 1](#procedure-1)  
@@ -38,7 +38,11 @@
   - [TRIGGER 2](#trigger-2)  
   - [Main Program 1](#main-program-1)  
   - [Main Program 2](#main-program-2)  
-- [Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-5--creating-a-graphical-user-interface-gui-for-working-with-the-database)
+
+- [Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-5--creating-a-graphical-user-interface-gui-for-working-with-the-database)  
+  - [Introduction](#introduction-4)  
+  - [Project Execution Guide](#project-execution-guide)
+
 
 
 
@@ -915,10 +919,38 @@ $$;
 
 ##Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database
 
+### Introduction  
+Event and Venue Management System with Ticketing and Response Handling
+
+Full-stack development using React.js with TypeScript (Frontend) and Node.js with Express (Backend)
+
+Database managed via PostgreSQL on pgAdmin in Docker
+
+Custom UI components, including dynamic tables for data presentation
+
+Integrated RESTful APIs for seamless communication between frontend and database
+
+Key skills: database design and management, interactive UI development, state management in React, TypeScript for improved code quality, responsive design
+
+Features include event and venue management, customer management system, modular admin dashboard with category filters, and dynamic data analytics
 
 
+מערכת לניהול אולמות ואירועים עם כרטיסים וטיפול בתגובות
+
+פיתוח מלא (Full-stack) עם React.js ו-TypeScript בצד הלקוח ו־Node.js עם Express בצד השרת
+
+מסד נתונים PostgreSQL מנוהל באמצעות pgAdmin בתוך Docker
+
+שימוש ברכיבי UI מותאמים אישית, כולל טבלאות דינמיות להצגת נתונים
+
+אינטגרציה עם RESTful APIs לתקשורת יעילה בין ה-Frontend ל-Database
+
+כישורים מרכזיים: עיצוב וניהול מסדי נתונים, פיתוח ממשקי משתמש אינטראקטיביים, ניהול State בריאקט, שימוש ב-TypeScript לשיפור איכות הקוד, ועיצוב רספונסיבי
+
+פונקציות מרכזיות: ניהול אירועים ואולמות, מערכת ניהול לקוחות, דשבורד מודולרי עם סינון לפי קטגוריות, וניתוח דינמי של נתונים.
 
 
+###Project Execution Guide
 
 
 
