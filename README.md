@@ -42,8 +42,7 @@
 - [Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database](#phase-5--creating-a-graphical-user-interface-gui-for-working-with-the-database)  
   - [Introduction](#introduction-4)  
   - [Project Execution Guide](#project-execution-guide)
-
-
+  - [Link to a Video Demonstrating the Project](#link-to-a-video-demonstrating-the-project)
 
 
 ---
@@ -984,9 +983,15 @@ Features include event and venue management, customer management system, modular
    ```bash
    npm run dev
    ```
-###Link to a video demonstrating the project
-###קישור לסרטון המציג את הפרויקט
-https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view
+
+---
+### 📽️ Link to a Video Demonstrating the Project  
+[Watch the project video on Google Drive](https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view)
+
+---
+
+### 🎥 קישור לסרטון המציג את הפרויקט  
+[לחץ כאן לצפייה בסרטון בגוגל דרייב](https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view)
 
 
 
