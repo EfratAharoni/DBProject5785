@@ -957,7 +957,7 @@ Steps to run the project:
 npm install next react react-dom
 npm install
 You might need to install additional packages as well.
-3. Run the project:
+5. Run the project:
 npm run dev
 
 שלבים להרצה:
