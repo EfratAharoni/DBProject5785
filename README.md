@@ -937,7 +937,7 @@ Key skills: database design and management, interactive UI development, state ma
 
 Features include event and venue management, customer management system, modular admin dashboard with category filters, and dynamic data analytics
 
-
+---
 מערכת לניהול אולמות ואירועים עם כרטיסים וטיפול בתגובות
 
 פיתוח מלא (Full-stack) עם React.js ו-TypeScript בצד הלקוח ו־Node.js עם Express בצד השרת
