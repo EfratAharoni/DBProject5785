@@ -952,6 +952,7 @@ Features include event and venue management, customer management system, modular
 
 פונקציות מרכזיות: ניהול אירועים ואולמות, מערכת ניהול לקוחות, דשבורד מודולרי עם סינון לפי קטגוריות, וניתוח דינמי של נתונים.
 
+---
 
 ### Project Execution Guide
 ## Steps to run the project:
@@ -967,9 +968,7 @@ Features include event and venue management, customer management system, modular
    ```bash
    npm run dev
    ```
-
 ---
-
 ## שלבים להרצה:
 
 1. לעשות RESTORE ל-BACKUP המצורף  
