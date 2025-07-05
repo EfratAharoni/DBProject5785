@@ -964,7 +964,13 @@ Features include event and venue management, customer management system, modular
    npm install  
    ```
    You might need to install additional packages as well.  
-3. Run the project:  
+3. The database username and password need to be updated in several files:
+In the lib folder, in the db.ts file
+In the app/api/sponsors/[id]/route.ts file
+In the app/api/sponsors/route.ts file
+In the app/api/venues/[id]/route.ts file
+And in the app/api/venues/route.ts file
+4. Run the project:  
    ```bash
    npm run dev
    ```
@@ -977,8 +983,15 @@ Features include event and venue management, customer management system, modular
    npm install next react react-dom  
    npm install  
    ```
-   יתכן ותצטרכו להתקין חבילות נוספות.  
-3. להריץ:  
+   *יתכן ותצטרכו להתקין חבילות נוספות.
+3. יש לעדכן את שם המשתמש והסיסמה של מסד הנתונים בכמה קבצים:
+בתיקייה lib, בקובץ db.ts
+בקובץ app/api/sponsors/[id]/route.ts
+בקובץ app/api/sponsors/route.ts
+בקובץ app/api/venues/[id]/route.ts
+ובקובץ app/api/venues/route.ts
+
+4. להריץ:  
    ```bash
    npm run dev
    ```
