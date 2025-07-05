@@ -917,7 +917,7 @@ $$;
 
 ---
 
-##Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database
+## Phase 5 – Creating a Graphical User Interface (GUI) for Working with the Database
 
 ### Introduction  
 Event and Venue Management System with Ticketing and Response Handling
@@ -950,7 +950,24 @@ Features include event and venue management, customer management system, modular
 פונקציות מרכזיות: ניהול אירועים ואולמות, מערכת ניהול לקוחות, דשבורד מודולרי עם סינון לפי קטגוריות, וניתוח דינמי של נתונים.
 
 
-###Project Execution Guide
+### Project Execution Guide
+Steps to run the project:
+1. Restore the attached backup.
+2. Install the packages:
+npm install next react react-dom
+npm install
+You might need to install additional packages as well.
+3. Run the project:
+npm run dev
+
+שלבים להרצה:
+1. לעשות RESTORE לBACKUP המצורף
+2. להתקין את החבילות
+npm install next react react-dom
+npm install
+יתכן ותצטרכו להתקין חבילות נוספות.
+4. להריץ npm run dev
+
 
 
 
