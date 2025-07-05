@@ -950,7 +950,8 @@ Features include event and venue management, customer management system, modular
 פונקציות מרכזיות: ניהול אירועים ואולמות, מערכת ניהול לקוחות, דשבורד מודולרי עם סינון לפי קטגוריות, וניתוח דינמי של נתונים.
 
 
-### Project Execution Guide## Steps to run the project:
+### Project Execution Guide
+## Steps to run the project:
 
 1. Restore the attached backup.  
 2. Install the packages:  
