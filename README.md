@@ -984,6 +984,9 @@ Features include event and venue management, customer management system, modular
    ```bash
    npm run dev
    ```
+###Link to a video demonstrating the project
+###קישור לסרטון המציג את הפרויקט
+https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view
 
 
 
