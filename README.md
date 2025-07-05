@@ -985,14 +985,13 @@ Features include event and venue management, customer management system, modular
    ```
 
 ---
-### 📽️ Link to a Video Demonstrating the Project  
+
+### Link to a Video Demonstrating the Project  
 [Watch the project video on Google Drive](https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view)
 
 ---
 
 ### 🎥 קישור לסרטון המציג את הפרויקט  
 [לחץ כאן לצפייה בסרטון בגוגל דרייב](https://drive.google.com/file/d/1KcRNNQ--KLxWnJa3yPDDSgiTivv2Q8yg/view)
-
-
 
 
